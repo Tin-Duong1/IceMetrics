@@ -1,0 +1,13 @@
+:root {
+    --primary-color: #1E00FF; /* primary color */
+    --secondary-color: #8987ff; /* secondary color */
+    --tertiary-color: #e0e0ff;  /* tertiary color */
+
+    --background-color: black;
+
+    font-family: "Inter", sans-serif; /* font family with main inter font */
+}
+
+body {
+    background-color: var(--background-color);
+}
