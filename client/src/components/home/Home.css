@@ -1,0 +1,47 @@
+.home-container {
+  z-index: 1;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  z-index: 100;
+  text-align: center;
+  max-width: 80vw;
+  height: 38vw;
+  margin-top: 4vw;
+  font-size: 2.5vw;
+
+  h1 {
+    font-weight: 700;
+    max-height: 100px;
+  }
+
+  p {
+    font-size: 1.5vw;
+    max-width: 1000px;
+    font-weight: 400;
+    color: #000000bf;
+    opacity: 0.75;
+    line-height: 1.5;
+  }
+}
+
+.home-info {
+  width: 100vw;
+  height: 1000px;
+  color: white;
+  background-color: black;
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+
+  background-color: white;
+  background-image: url("./hero-background-2.png");
+  background-size: 100vw;
+}
