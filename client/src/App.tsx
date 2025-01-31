@@ -1,22 +1,21 @@
-import "./App.css";
-import Home from "./components/home/Home";
-import Login from "./components/login/Login";
-import Navbar from "./components/navbar/Navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
+import SignIn from "./components/SignIn";
+import NavLayout from "./components/NavLayout";
+import Home from "./Home";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-function App() {
+export default function App() {
   return (
-    <main>
+    <ThemeProvider theme={theme}>
       <Router>
-        <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route element={<NavLayout />}>
+            <Route index element={<Home />} />
+          </Route>
+          <Route path="/login" element={<SignIn />} />
         </Routes>
       </Router>
-    </main>
+    </ThemeProvider>
   );
 }
-
-export default App;
