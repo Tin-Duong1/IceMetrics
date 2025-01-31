@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   Divider,
   FormControl,
   FormControlLabel,
@@ -11,17 +12,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
-import theme from "../theme";
-import { Form } from "react-router";
 import LogInBackground from "/LogInBackground.png";
 import Logo from "/LogoBlack.svg";
-import {
-  CheckBox,
-  CheckBoxOutlineBlank,
-  FormatAlignCenter,
-} from "@mui/icons-material";
-import { T } from "react-router/dist/development/fog-of-war-Ckdfl79L";
 
 function SignIn() {
   return (
@@ -43,8 +35,9 @@ function SignIn() {
           justifyContent: "center",
           padding: 4,
           borderRadius: { xs: 0, sm: 2 },
-          width: { xs: "100vw", sm: 400 },
+          width: { xs: "100vw", sm: 450 },
           height: { xs: "100vh", sm: "auto" },
+          paddingInline: { xs: 10, sm: 6 },
         }}
       >
         <Box
@@ -55,7 +48,9 @@ function SignIn() {
             gap: 2,
           }}
         >
-          <img src={Logo} height={32} />
+          <Link href="/">
+            <img src={Logo} height={32} />
+          </Link>
           <Typography variant="h4" fontWeight={600} sx={{ mt: 2 }}>
             Sign in
           </Typography>
@@ -82,7 +77,6 @@ function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
-              autoFocus
               required
               fullWidth
             />
@@ -96,7 +90,7 @@ function SignIn() {
               mb: 2,
             }}
           >
-            <CheckBox />
+            <Checkbox sx={{ height: 10, width: 10 }} />
             <FormLabel htmlFor="remember">
               <Typography variant="body2">Remember me</Typography>
             </FormLabel>
@@ -110,7 +104,12 @@ function SignIn() {
         </Box>
         <Divider>or</Divider>
         <Typography sx={{ textAlign: "center", my: 2 }}>
-          Dont have an account? {<Link variant="body2">Sign up</Link>}{" "}
+          Dont have an account?{" "}
+          {
+            <Link href="/signup" variant="body2">
+              Sign up
+            </Link>
+          }
         </Typography>
       </Card>
     </Box>

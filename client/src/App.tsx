@@ -4,6 +4,7 @@ import NavLayout from "./components/NavLayout";
 import Home from "./Home";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
+import SignUp from "./components/SignUp";
 
 export default function App() {
   return (
@@ -13,7 +14,8 @@ export default function App() {
           <Route element={<NavLayout />}>
             <Route index element={<Home />} />
           </Route>
-          <Route path="/login" element={<SignIn />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </Router>
     </ThemeProvider>

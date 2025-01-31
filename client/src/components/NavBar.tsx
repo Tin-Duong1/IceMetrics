@@ -4,7 +4,6 @@ import {
   AppBar,
   Box,
   Button,
-  Container,
   Divider,
   Drawer,
   IconButton,
@@ -16,7 +15,6 @@ import {
 import { CloseRounded, Menu } from "@mui/icons-material";
 import LargeLogo from "/LogoBlack.svg";
 import Title from "/title.png";
-import NavLayout from "./NavLayout";
 import { Link } from "react-router";
 
 const pages = ["Home", "Features", "About Us", "Contact"];
@@ -83,10 +81,15 @@ function NavBar() {
           </Box>
         </Box>
         <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1 }}>
-          <Button variant="text" color="primary" component={Link} to="/login">
+          <Button variant="text" color="primary" component={Link} to="/signin">
             Sign in
           </Button>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            component={Link}
+            to="/signup"
+          >
             Sign up
           </Button>
         </Box>
@@ -147,11 +150,17 @@ function NavBar() {
                 variant="contained"
                 color="primary"
                 component={Link}
-                to="/login"
+                to="/signin"
               >
                 Sign in
               </Button>
-              <Button sx={{ py: 1.5 }} variant="outlined" color="primary">
+              <Button
+                sx={{ py: 1.5 }}
+                variant="outlined"
+                color="primary"
+                component={Link}
+                to="/signup"
+              >
                 Sign up
               </Button>
             </Box>

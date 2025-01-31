@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 
 // A custom theme for this app
 const theme = createTheme({
@@ -31,6 +31,15 @@ const theme = createTheme({
         },
         outlinedPrimary: {
           color: "black",
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          height: 42,
+          backgroundColor: grey[50],
         },
       },
     },
