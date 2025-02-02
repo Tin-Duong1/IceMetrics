@@ -5,6 +5,8 @@ import Home from "./Home";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import SignUp from "./components/SignUp";
+import About from "./About";
+import { AnimatePresence } from "framer-motion";
 
 export default function App() {
   return (
@@ -13,6 +15,7 @@ export default function App() {
         <Routes>
           <Route element={<NavLayout />}>
             <Route index element={<Home />} />
+            <Route path="/about" element={<About />} />
           </Route>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />

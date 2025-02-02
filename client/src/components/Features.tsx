@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
-import React from "react";
 
 function Features() {
-  return <Box sx={{ height: 600, backgroundColor: "black" }}></Box>;
+  return (
+    <Box sx={{ height: 1200, backgroundColor: "black", color: "white" }}></Box>
+  );
 }
 
 export default Features;

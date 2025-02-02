@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { grey } from "@mui/material/colors";
 import {
   AppBar,
@@ -15,9 +15,14 @@ import {
 import { CloseRounded, Menu } from "@mui/icons-material";
 import LargeLogo from "/LogoBlack.svg";
 import Title from "/title.png";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
-const pages = ["Home", "Features", "About Us", "Contact"];
+const pages = [
+  { name: "Home", route: "/" },
+  { name: "Features", route: "/features" },
+  { name: "About Us", route: "/about" },
+  { name: "Contact", route: "/contact" },
+];
 
 function NavBar() {
   const [open, setOpen] = useState(false);
@@ -41,11 +46,13 @@ function NavBar() {
         sx={{
           justifyContent: "space-between",
           backdropFilter: "blur(24px)",
+          bgcolor: "transparent",
           borderRadius: 4,
           mx: 2,
           paddingInlineEnd: "16px !important",
           boxShadow:
             "hsla(220, 30%, 5%, 0.07) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.07) 0px 8px 16px -5px",
+          transition: "background-color 2s ease-in-out",
         }}
       >
         <Box
@@ -73,8 +80,14 @@ function NavBar() {
           <Box sx={{ display: { xs: "none", md: "flex" }, ml: 4 }}>
             {pages.map((page) => {
               return (
-                <Button variant="text" size="medium" color="primary">
-                  {page}
+                <Button
+                  variant="text"
+                  size="medium"
+                  color="primary"
+                  component={Link}
+                  to={page.route}
+                >
+                  {page.name}
                 </Button>
               );
             })}
@@ -129,8 +142,8 @@ function NavBar() {
             </Box>
             <List>
               {pages.map((page) => (
-                <ListItemButton>
-                  <ListItemText sx={{ color: "black" }} primary={page} />
+                <ListItemButton component={Link} to={page.route}>
+                  <ListItemText sx={{ color: "black" }} primary={page.name} />
                 </ListItemButton>
               ))}
             </List>

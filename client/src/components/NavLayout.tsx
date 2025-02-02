@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "./NavBar";
-import { Outlet } from "react-router";
+import AnimatedOutlet from "./animations/AnimatedOutlet";
+import { useLocation } from "react-router";
 
 function NavLayout() {
   return (
     <div>
       <NavBar />
       <div>
-        <Outlet />
+        <AnimatedOutlet />
       </div>
     </div>
   );
