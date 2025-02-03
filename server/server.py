@@ -1,9 +1,17 @@
 from fastapi import FastAPI
 from auth import router as auth_router
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+from database.database_setup import create_db_and_tables
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+        create_db_and_tables()
+        yield app
 
 # creates the FastAPI instance
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # origins that are allowed to make requests to the server
 origins = [
@@ -21,6 +29,7 @@ app.add_middleware(
 
 # connects to the authentication routes
 app.include_router(auth_router)
+
 
 # root route
 @app.get("/")
