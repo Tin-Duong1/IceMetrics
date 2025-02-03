@@ -28,7 +28,7 @@ codes = ["123123", "888888", "123456", "654321"]
 async def root(user: User):
     for u in users:
         if u["email"] == user.email and u["password"] == user.password:
-            return {"message": "Logged in"}
+            return {"message": "Logged in", "code": "success"}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 # sign up route
@@ -37,5 +37,5 @@ async def root(user: UserInfo):
     email = user.email
     for u in users:
         if u["email"] == email:
-            raise HTTPException(status_code=400, detail="Email already registered")
-    return {"message": "User created"}
+            raise HTTPException(status_code=409, detail="Email already registered")
+    return {"message": "User created", "code": "success"}
