@@ -21,3 +21,7 @@ pip install -r requirements.txt
 # Startup the FastAPI dev server
 
 uvicorn server:app --reload
+
+# Setup backend to run
+
+Create .env package and then put connection string for the app and then it should conenct successfully
