@@ -17,9 +17,8 @@ import { FormEvent, useState } from "react";
 import axios from "axios";
 
 function SignUp() {
-  const [signupError, setSignupError] = useState(true);
-  const [signupMessage, setSignupMessage] = useState("wxaxawx");
-  const [emailUsed, setEmailUsed] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertText, setAlertText] = useState("");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,14 +31,19 @@ function SignUp() {
         email: data.get("email"),
         password: data.get("password"),
       });
+
+      if (response.status === 200) {
+        setShowAlert(true);
+        setAlertText("Success! Going to verification process...");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const statusCode = error.response.status;
 
           if (statusCode === 409) {
-            setSignupError(true);
-            setSignupMessage("Email is already in use.");
+            setShowAlert(true);
+            setAlertText("Email already in use");
           }
         }
       }
@@ -90,12 +94,16 @@ function SignUp() {
           onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}
         >
-          {signupMessage && (
+          {showAlert && (
             <Alert
               sx={{ borderRadius: 2 }}
-              severity={signupError ? "error" : "success"}
+              severity={
+                alertText === "Success! Going to verification process..."
+                  ? "success"
+                  : "error"
+              }
             >
-              {signupMessage}
+              {alertText}
             </Alert>
           )}
           <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>

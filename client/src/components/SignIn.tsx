@@ -17,7 +17,8 @@ import { FormEvent, useState } from "react";
 import axios from "axios";
 
 function SignIn() {
-  const [invalidCredentials, setInvalidCredentials] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertText, setAlertText] = useState("");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,13 +29,19 @@ function SignIn() {
         email: data.get("email"),
         password: data.get("password"),
       });
+
+      if (response.status === 200) {
+        setShowAlert(true);
+        setAlertText("Logged In");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const statusCode = error.response.status;
 
           if (statusCode === 401) {
-            setInvalidCredentials(true);
+            setShowAlert(true);
+            setAlertText("Invalid credentials");
           }
         }
       }
@@ -85,9 +92,12 @@ function SignIn() {
           onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}
         >
-          {invalidCredentials && (
-            <Alert sx={{ borderRadius: 2 }} severity="error">
-              Invalid Credentials
+          {showAlert && (
+            <Alert
+              sx={{ borderRadius: 2 }}
+              severity={alertText === "Logged In" ? "success" : "error"}
+            >
+              {alertText}
             </Alert>
           )}
           <FormControl>
