@@ -6,21 +6,19 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import SignUp from "./components/SignUp";
 import About from "./About";
-import { AnimatePresence } from "framer-motion";
+import { CssBaseline } from "@mui/material";
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          <Route element={<NavLayout />}>
-            <Route index element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Route>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <Router>
+      <Routes>
+        <Route element={<NavLayout />}>
+          <Route index element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Route>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </Router>
   );
 }
