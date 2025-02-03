@@ -1,67 +1,44 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
   Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   FormLabel,
   Link,
-  Slide,
   TextField,
   Typography,
 } from "@mui/material";
 import LogInBackground from "/LogInBackground.png";
 import Logo from "/LogoBlack.svg";
 import { FormEvent, useState } from "react";
+import axios from "axios";
 
 function SignIn() {
-  const [emailError, setEmailError] = useState(false);
-  const [emailText, setEmailText] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordText, setPasswordText] = useState("");
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    //IMPLEMENT THE SUBMISSION TO THE BACKEND
-    //
-    //
-    //
-    //
-    //
-  };
+    try {
+      const response = await axios.post("/api/signin", {
+        email: data.get("email"),
+        password: data.get("password"),
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const statusCode = error.response.status;
 
-  const validateInput = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-
-    let valid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailText("Please enter a valid email adress.");
-      valid = false;
-    } else {
-      setEmailError(false);
-      setEmailText("");
+          if (statusCode === 401) {
+            setInvalidCredentials(true);
+          }
+        }
+      }
     }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordText("Password must be at least 6 characters long.");
-      valid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordText("");
-    }
-
-    return valid;
   };
 
   return (
@@ -106,20 +83,21 @@ function SignIn() {
         <Box
           component="form"
           onSubmit={handleSubmit}
-          noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}
         >
+          {invalidCredentials && (
+            <Alert sx={{ borderRadius: 2 }} severity="error">
+              Invalid Credentials
+            </Alert>
+          )}
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
-              error={emailError}
-              helperText={emailText}
               id="email"
               type="email"
               name="email"
               placeholder="your@email.com"
               autoComplete="email"
-              autoFocus
               required
               fullWidth
             />
@@ -127,12 +105,10 @@ function SignIn() {
           <FormControl>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
-              error={passwordError}
-              helperText={passwordText}
+              id="password"
+              type="password"
               name="password"
               placeholder="••••••"
-              type="password"
-              id="password"
               autoComplete="current-password"
               required
               fullWidth
@@ -152,12 +128,7 @@ function SignIn() {
               <Typography variant="body2">Remember me</Typography>
             </FormLabel>
           </FormControl>
-          <Button
-            type="submit"
-            onClick={validateInput}
-            variant="contained"
-            color="primary"
-          >
+          <Button type="submit" variant="contained" color="primary">
             Sign In
           </Button>
           <Link component="button" type="button" variant="body2" sx={{ my: 2 }}>
