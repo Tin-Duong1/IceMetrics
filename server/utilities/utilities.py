@@ -9,5 +9,5 @@ def get_video_by_id(db: Session, video_id: int) -> VideoData:
     return db.exec(select(UserVideos).where(UserVideos.id == video_id)).first()
 
 def get_all_videos_by_user_id(db: Session, user_id: int) -> list[UserVideos]:
-    return db.exec(select(UserVideos).where(UserVideos.id == user_id)).first()
+    return db.exec(select(UserVideos).where(UserVideos.id == user_id)).all()
 
