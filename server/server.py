@@ -8,7 +8,8 @@ from database.database_setup import create_db_and_tables
 @asynccontextmanager
 async def lifespan(app: FastAPI):
         create_db_and_tables()
-        yield app
+        yield
+        # No need to yield app here
 
 # creates the FastAPI instance
 app = FastAPI(lifespan=lifespan)
