@@ -43,6 +43,41 @@ const theme = createTheme({
         },
       },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          padding: "8px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          backgroundColor: "transparent",
+          "&.Mui-selected": {
+            backgroundColor: grey[200],
+            "& .MuiListItemIcon-root": {
+              color: "black", // Change to primary.main color
+            },
+          },
+          "&.Mui-selected:hover": {
+            backgroundColor: grey[300],
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          width: 40,
+          color: grey[600],
+        },
+      },
+    },
   },
   typography: {
     fontFamily: "Inter, sans-serif",
