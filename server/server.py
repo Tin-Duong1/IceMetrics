@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from auth import router as auth_router
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+
+from utilities.auth import router as auth_router
 
 from database.database_setup import create_db_and_tables
 
