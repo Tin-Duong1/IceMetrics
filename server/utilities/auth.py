@@ -3,10 +3,14 @@ from sqlmodel import Session
 from pydantic import BaseModel
 from database.database_setup import get_session
 from database.models import UserInfo
-from utilities.security import get_password_hash, verify_password
+from utilities.security import get_password_hash, verify_password, authenticate_user, create_access_token
 from utilities.utilities import get_user_by_email
+from datetime import timedelta
 
 router = APIRouter()
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 
 class UserCreate(BaseModel):
     name: str
@@ -20,14 +24,16 @@ class UserLogin(BaseModel):
 # sign in route
 @router.post("/signin")
 async def signin(user: UserLogin, session: Session = Depends(get_session)):
-    existing_user = get_user_by_email(session, user.email)
-    if not existing_user:
-        raise HTTPException(status_code=400, detail="User not found")
+    authenticated_user = authenticate_user(session, user.email, user.password)
+    if not authenticated_user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    if not verify_password(user.password, existing_user.password):
-        raise HTTPException(status_code=400, detail="Invalid password")
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": authenticated_user.email}, expires_delta=access_token_expires
+    )
 
-    return existing_user
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # sign up route
 @router.post("/signup")
