@@ -19,30 +19,34 @@ import axios from "axios";
 function SignIn() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState("");
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
 
     try {
-      const response = await axios.post("/api/signin", {
-        email: data.get("email"),
-        password: data.get("password"),
-      });
+      const response = await axios.post("/api/signin", formValues);
 
       if (response.status === 200) {
         setShowAlert(true);
         setAlertText("Logged In");
+        setFormValues({ email: "", password: "" });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const statusCode = error.response.status;
 
-          if (statusCode === 401) {
-            setShowAlert(true);
-            setAlertText("Invalid credentials");
-          }
+          setShowAlert(true);
+          setAlertText("Invalid credentials");
         }
       }
     }
@@ -110,6 +114,8 @@ function SignIn() {
               autoComplete="email"
               required
               fullWidth
+              value={formValues.email}
+              onChange={handleChange}
             />
           </FormControl>
           <FormControl>
@@ -122,6 +128,8 @@ function SignIn() {
               autoComplete="current-password"
               required
               fullWidth
+              value={formValues.password}
+              onChange={handleChange}
             />
           </FormControl>
           <FormControl

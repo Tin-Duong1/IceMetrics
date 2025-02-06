@@ -19,30 +19,37 @@ import axios from "axios";
 function SignUp() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertText, setAlertText] = useState("");
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
 
     try {
-      const response = await axios.post("/api/signup", {
-        firstName: data.get("firstname"),
-        lastName: data.get("lastname"),
-        email: data.get("email"),
-        password: data.get("password"),
-      });
+      const response = await axios.post("/api/signup", formValues);
 
       if (response.status === 200) {
         setShowAlert(true);
         setAlertText("Success! Going to verification process...");
+        setFormValues({ name: "", email: "", password: "" });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           const statusCode = error.response.status;
 
+          setShowAlert(true);
+          setAlertText("Issue during sign up");
+
           if (statusCode === 409) {
-            setShowAlert(true);
             setAlertText("Email already in use");
           }
         }
@@ -106,33 +113,21 @@ function SignUp() {
               {alertText}
             </Alert>
           )}
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-            <FormControl>
-              <FormLabel htmlFor="firstname">First Name</FormLabel>
-              <TextField
-                id="firstname"
-                type="text"
-                name="firstname"
-                placeholder="John"
-                autoCapitalize="words"
-                autoFocus
-                required
-                fullWidth
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="lastname">Last Name</FormLabel>
-              <TextField
-                id="lastname"
-                type="text"
-                name="lastname"
-                placeholder="Doe"
-                autoCapitalize="words"
-                required
-                fullWidth
-              />
-            </FormControl>
-          </Box>
+          <FormControl>
+            <FormLabel htmlFor="name">Name</FormLabel>
+            <TextField
+              id="name"
+              type="text"
+              name="name"
+              placeholder="John Doe"
+              autoCapitalize="words"
+              autoFocus
+              required
+              fullWidth
+              value={formValues.name}
+              onChange={handleChange}
+            />
+          </FormControl>
           <FormControl>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
@@ -143,6 +138,8 @@ function SignUp() {
               autoComplete="email"
               required
               fullWidth
+              value={formValues.email}
+              onChange={handleChange}
             />
           </FormControl>
           <FormControl>
@@ -155,6 +152,8 @@ function SignUp() {
               autoComplete="current-password"
               required
               fullWidth
+              value={formValues.password}
+              onChange={handleChange}
             />
           </FormControl>
           <FormControl
