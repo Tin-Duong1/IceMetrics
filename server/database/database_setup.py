@@ -23,5 +23,9 @@ def get_session():
     with Session(engine) as session:
         yield session
         
+def get_user_by_email(email: str):
+    with Session(engine) as session:
+        return UserInfo.get_user_by_email(session, email)
+
 SessionDep = Annotated[Session, Depends(get_session)]
 
