@@ -8,6 +8,7 @@ import SignUp from "./components/SignUp";
 import About from "./About";
 import { CssBaseline } from "@mui/material";
 import Dashboard from "./Dashboard";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 export default function App() {
   return (
@@ -19,7 +20,9 @@ export default function App() {
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
     </Router>
   );
