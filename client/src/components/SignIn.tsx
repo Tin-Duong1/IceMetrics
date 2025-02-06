@@ -36,9 +36,15 @@ function SignIn() {
       const response = await axios.post("/api/signin", formValues);
 
       if (response.status === 200) {
+        const { access_token } = response.data;
+
+        localStorage.setItem("jwt_token", access_token);
+
         setShowAlert(true);
         setAlertText("Logged In");
         setFormValues({ email: "", password: "" });
+
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
