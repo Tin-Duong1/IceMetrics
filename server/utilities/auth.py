@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from database.database_setup import get_session
 from database.models import UserInfo
 from utilities.security import get_password_hash, verify_password
-
-from utilities.utilities import *
+from utilities.utilities import get_user_by_email
 
 router = APIRouter()
 

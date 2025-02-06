@@ -43,10 +43,10 @@ function SignIn() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          const statusCode = error.response.status;
+          const detail = error.response.data.detail;
 
           setShowAlert(true);
-          setAlertText("Invalid credentials");
+          setAlertText(detail);
         }
       }
     }
