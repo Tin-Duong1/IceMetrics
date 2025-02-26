@@ -5,16 +5,19 @@ from contextlib import asynccontextmanager
 
 from utilities.auth import router as auth_router
 
-from database.database_setup import create_db_and_tables
+#from database.database_setup import create_db_and_tables
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-        create_db_and_tables()
-        yield
+#@asynccontextmanager
+#async def lifespan(app: FastAPI):
+#        create_db_and_tables()
+#        yield
         # No need to yield app here
 
 # creates the FastAPI instance
-app = FastAPI(lifespan=lifespan)
+
+#app = FastAPI(lifespan=lifespan)
+
+app = FastAPI()
 
 # origins that are allowed to make requests to the server
 origins = [
