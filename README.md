@@ -60,7 +60,7 @@ cd server
 alembic upgrade head
 ```
 
-4. Start the FastAPI server:
+4. Start the FastAPI server (root is to the docs):
 
 ```bash
 uvicorn server:app --reload
