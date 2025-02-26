@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from contextlib import asynccontextmanager
 
 from utilities.auth import router as auth_router
@@ -36,6 +37,6 @@ app.include_router(auth_router)
 # root route
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return RedirectResponse(url="/docs")
 
 
