@@ -17,8 +17,6 @@ from database.models import UserInfo
 SECRET_KEY = "dbe62f000e612a462638711ae33a61427d234de75e9f5c5f44a668e6ee47b922"
 ALGORITHM = "HS256"
 
-
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -35,6 +33,24 @@ def authenticate_user(session: Session, email: str, password: str):
     if not verify_password(password, user.password):  # Corrected attribute name
         return None
     return user
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    print(token)
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            print("xaxaw")
+            raise credentials_exception
+    except InvalidTokenError:
+        print("xxawdaw")
+        raise credentials_exception
+    return email
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()

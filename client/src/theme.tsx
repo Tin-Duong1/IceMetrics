@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import { grey, red } from "@mui/material/colors";
+import type {} from "@mui/x-charts/themeAugmentation";
 
 // A custom theme for this app
 const theme = createTheme({
@@ -75,6 +76,13 @@ const theme = createTheme({
         root: {
           width: 40,
           color: grey[600],
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          width: 150,
         },
       },
     },

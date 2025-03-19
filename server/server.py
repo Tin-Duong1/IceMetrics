@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse
 from contextlib import asynccontextmanager
 
 from utilities.auth import router as auth_router
+from routes.user_routes import router as user_router
 
 #from database.database_setup import create_db_and_tables
 
@@ -35,6 +36,7 @@ app.add_middleware(
 
 # connects to the authentication routes
 app.include_router(auth_router)
+app.include_router(user_router)
 
 
 # root route

@@ -15,7 +15,6 @@ import {
   PeopleOutlineRounded,
   SettingsRounded,
 } from "@mui/icons-material";
-
 const mainItems = [
   { name: "Home", icon: <HomeRounded /> },
   { name: "Analytics", icon: <AnalyticsRounded /> },
@@ -28,7 +27,11 @@ const secondaryItems = [
   { name: "Feedback", icon: <FeedRounded /> },
 ];
 
-function MenuContent() {
+function MenuContent({
+  setActivePage,
+}: {
+  setActivePage: (page: string) => void;
+}) {
   return (
     <Stack
       sx={{
@@ -39,24 +42,22 @@ function MenuContent() {
       <List dense>
         {mainItems.map((item, index) => (
           <ListItem key={index} sx={{ display: "block" }}>
-            <ListItemButton selected={index === 0}>
+            <ListItemButton onClick={() => setActivePage(item.name)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
         ))}
-        ;
       </List>
       <List dense>
         {secondaryItems.map((item, index) => (
           <ListItem key={index} sx={{ display: "block" }}>
-            <ListItemButton>
+            <ListItemButton onClick={() => setActivePage(item.name)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
         ))}
-        ;
       </List>
     </Stack>
   );

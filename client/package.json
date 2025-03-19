@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "latest",
-    "@mui/icons-material": "next",
-    "@mui/material": "next",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "@mui/x-charts": "^7.28.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.0.6",

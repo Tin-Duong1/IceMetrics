@@ -1,14 +1,13 @@
-import { Box, Divider } from "@mui/material";
-import React from "react";
+import { Box } from "@mui/material";
 import MenuContent from "./MenuContent";
 import SideBarLogo from "./SideBarLogo";
 import { grey } from "@mui/material/colors";
 
-function SideBar() {
+function SideBar({ setActivePage }: { setActivePage: (page: string) => void }) {
   return (
     <Box
       sx={{
-        width: 240,
+        width: "240px", // Ensure static width
         height: "100vh",
         backgroundColor: grey[100],
         display: "flex",
@@ -18,7 +17,7 @@ function SideBar() {
       }}
     >
       <SideBarLogo />
-      <MenuContent />
+      <MenuContent setActivePage={setActivePage} />
     </Box>
   );
 }
