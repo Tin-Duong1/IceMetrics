@@ -15,10 +15,11 @@ import {
   PeopleOutlineRounded,
   SettingsRounded,
 } from "@mui/icons-material";
+import { grey } from "@mui/material/colors";
 const mainItems = [
   { name: "Home", icon: <HomeRounded /> },
   { name: "Analytics", icon: <AnalyticsRounded /> },
-  { name: "Data", icon: <PeopleOutlineRounded /> },
+  { name: "Uploads", icon: <PeopleOutlineRounded /> },
 ];
 
 const secondaryItems = [
@@ -29,8 +30,10 @@ const secondaryItems = [
 
 function MenuContent({
   setActivePage,
+  activePage,
 }: {
   setActivePage: (page: string) => void;
+  activePage: string;
 }) {
   return (
     <Stack
@@ -41,9 +44,27 @@ function MenuContent({
     >
       <List dense>
         {mainItems.map((item, index) => (
-          <ListItem key={index} sx={{ display: "block" }}>
-            <ListItemButton onClick={() => setActivePage(item.name)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItem
+            key={index}
+            sx={{
+              display: "block",
+              width: "100%",
+              padding: 0,
+            }}
+          >
+            <ListItemButton
+              onClick={() => setActivePage(item.name)}
+              sx={{
+                color: activePage === item.name ? "black" : "grey",
+                backgroundColor:
+                  activePage === item.name ? grey[200] : "inherit",
+                width: "fill-content",
+                display: "flex",
+                justifyContent: "flex-start",
+                gap: 1,
+              }}
+            >
+              {item.icon}
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
@@ -51,9 +72,27 @@ function MenuContent({
       </List>
       <List dense>
         {secondaryItems.map((item, index) => (
-          <ListItem key={index} sx={{ display: "block" }}>
-            <ListItemButton onClick={() => setActivePage(item.name)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItem
+            key={index}
+            sx={{
+              display: "block",
+              width: "100%",
+              padding: 0,
+            }}
+          >
+            <ListItemButton
+              onClick={() => setActivePage(item.name)}
+              sx={{
+                color: activePage === item.name ? "black" : "grey",
+                backgroundColor:
+                  activePage === item.name ? grey[200] : "inherit",
+                width: "fill-content",
+                display: "flex",
+                justifyContent: "flex-start",
+                gap: 1,
+              }}
+            >
+              {item.icon}
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>

@@ -2,12 +2,18 @@ import { Box } from "@mui/material";
 import MenuContent from "./MenuContent";
 import SideBarLogo from "./SideBarLogo";
 import { grey } from "@mui/material/colors";
+import SideBarAccount from "./SideBarAccount";
 
-function SideBar({ setActivePage }: { setActivePage: (page: string) => void }) {
+function SideBar({
+  setActivePage,
+  activePage,
+}: {
+  setActivePage: (page: string) => void;
+  activePage: string;
+}) {
   return (
     <Box
       sx={{
-        width: "240px", // Ensure static width
         height: "100vh",
         backgroundColor: grey[100],
         display: "flex",
@@ -17,7 +23,8 @@ function SideBar({ setActivePage }: { setActivePage: (page: string) => void }) {
       }}
     >
       <SideBarLogo />
-      <MenuContent setActivePage={setActivePage} />
+      <MenuContent setActivePage={setActivePage} activePage={activePage} />
+      <SideBarAccount />
     </Box>
   );
 }
