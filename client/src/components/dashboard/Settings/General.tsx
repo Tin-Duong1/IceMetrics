@@ -1,4 +1,12 @@
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 function General({ userData }: { userData: any }) {
   return (
@@ -16,7 +24,8 @@ function General({ userData }: { userData: any }) {
         <Typography width={150} fontWeight={"600"}>
           Profile Picture
         </Typography>
-        <Box
+        <Stack
+          justifyContent={"space-between"}
           sx={{
             flexGrow: 1,
             maxWidth: 500,
@@ -25,15 +34,14 @@ function General({ userData }: { userData: any }) {
             alignItems: "center",
           }}
         >
-          <img
-            src="https://placehold.co/600x400"
-            alt="profile"
-            style={{ borderRadius: "50%", width: 150, height: 150 }}
-          />
-          <Button variant="contained" sx={{ ml: 2 }}>
-            Change Picture
-          </Button>
-        </Box>
+          <Avatar sx={{ height: 128, width: 128 }} />
+          <Stack direction={"row"} spacing={2}>
+            <Button sx={{ ml: 2 }}>Edit Picture</Button>
+            <Button variant="contained" sx={{ ml: 2 }}>
+              Change Picture
+            </Button>
+          </Stack>
+        </Stack>
       </Box>
       <Divider />
       <div>

@@ -12,14 +12,14 @@ import {
   FeedRounded,
   HomeRounded,
   InfoRounded,
-  PeopleOutlineRounded,
   SettingsRounded,
+  UploadRounded,
 } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
 const mainItems = [
   { name: "Home", icon: <HomeRounded /> },
   { name: "Analytics", icon: <AnalyticsRounded /> },
-  { name: "Uploads", icon: <PeopleOutlineRounded /> },
+  { name: "Uploads", icon: <UploadRounded /> },
 ];
 
 const secondaryItems = [

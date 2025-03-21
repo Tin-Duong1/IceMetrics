@@ -2,7 +2,15 @@ import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
 import React from "react";
 import { T } from "react-router/dist/development/fog-of-war-CvttGpNz";
 
-function StatCard() {
+function StatCard({
+  title,
+  caption,
+  data,
+}: {
+  title: string;
+  caption: string;
+  data: any;
+}) {
   return (
     <Card
       variant="outlined"
@@ -10,7 +18,7 @@ function StatCard() {
     >
       <CardContent>
         <Typography component="h2" variant="subtitle2">
-          Videos Uploaded
+          {title}
         </Typography>
         <Stack
           direction="column"
@@ -22,11 +30,11 @@ function StatCard() {
               sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
               <Typography variant="h4" component={"p"}>
-                Test
+                {data}
               </Typography>
               <Chip label="Test" />
             </Stack>
-            <Typography variant="caption">Hello</Typography>
+            <Typography variant="caption">{caption}</Typography>
           </Stack>
         </Stack>
       </CardContent>

@@ -153,24 +153,8 @@ function SignUp() {
               onChange={handleChange}
             />
           </FormControl>
-          <FormControl
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-              mb: 2,
-            }}
-          >
-            <Checkbox sx={{ height: 10, width: 10 }} />
-            <FormLabel htmlFor="remember">
-              <Typography variant="body2">
-                I want to receive updates via email
-              </Typography>
-            </FormLabel>
-          </FormControl>
           <Button
-            sx={{ mb: 4 }}
+            sx={{ mb: 4, mt: 2 }}
             type="submit"
             variant="contained"
             color="primary"

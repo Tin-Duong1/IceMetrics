@@ -138,21 +138,12 @@ function SignIn() {
               onChange={handleChange}
             />
           </FormControl>
-          <FormControl
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-              mb: 2,
-            }}
+          <Button
+            sx={{ mt: 2 }}
+            type="submit"
+            variant="contained"
+            color="primary"
           >
-            <Checkbox sx={{ height: 10, width: 10 }} />
-            <FormLabel htmlFor="remember">
-              <Typography variant="body2">Remember me</Typography>
-            </FormLabel>
-          </FormControl>
-          <Button type="submit" variant="contained" color="primary">
             Sign In
           </Button>
           <Link component="button" type="button" variant="body2" sx={{ my: 2 }}>

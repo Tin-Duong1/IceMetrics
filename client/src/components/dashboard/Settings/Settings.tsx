@@ -5,9 +5,9 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import General from "./Settings/General";
-import Security from "./Settings/Security";
-import Data from "./Settings/Data";
+import General from "./General";
+import Security from "./Security";
+import Data from "./Data";
 import axios from "axios";
 
 function Settings() {

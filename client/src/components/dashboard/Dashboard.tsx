@@ -6,17 +6,23 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-import SideBar from "./components/dashboard/SideBar";
-import Settings from "./components/dashboard/Settings";
-import Home from "./components/dashboard/Home/Home";
-import Search from "./components/dashboard/Search";
+import { useState, useEffect } from "react";
+import SideBar from "./Sidebar/SideBar";
+import Settings from "./Settings/Settings";
+import Home from "./Home/Home";
+import Search from "./Search";
 import { Notifications } from "@mui/icons-material";
-import Uploads from "./components/dashboard/Uploads";
-import Feedback from "./components/dashboard/Feedback";
+import Uploads from "./Uploads";
+import Feedback from "./Feedback/Feedback";
 
 function Dashboard() {
-  const [activePage, setActivePage] = useState("Home");
+  const [activePage, setActivePage] = useState(() => {
+    return localStorage.getItem("activePage") || "Home";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("activePage", activePage);
+  }, [activePage]);
 
   const renderPage = () => {
     switch (activePage) {

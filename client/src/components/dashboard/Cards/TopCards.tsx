@@ -9,7 +9,7 @@ function TopCards() {
           flexGrow: 3,
           padding: 2,
           borderRadius: 4,
-          boxShadow: 6,
+          boxShadow: 1,
         }}
       >
         <Stack direction={"row"} gap={2} justifyContent={"space-between"}>

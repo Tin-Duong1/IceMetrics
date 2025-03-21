@@ -1,21 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./components/SignIn";
-import NavLayout from "./components/NavLayout";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
+import SignIn from "./components/Landing/SignIn";
+import NavLayout from "./components/Navbar/NavLayout";
 import Home from "./Home";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
-import SignUp from "./components/SignUp";
+import SignUp from "./components/Landing/SignUp";
 import About from "./About";
 import { CssBaseline } from "@mui/material";
-import Dashboard from "./Dashboard";
-import ProtectedRoutes from "./components/ProtectedRoutes";
+import Dashboard from "./components/dashboard/Dashboard";
+import ProtectedRoutes from "./components/Navbar/ProtectedRoutes";
 
 export default function App() {
+  const jwtToken = localStorage.getItem("jwt_token");
+
   return (
     <Router>
       <Routes>
         <Route element={<NavLayout />}>
-          <Route index element={<Home />} />
+          <Route
+            index
+            element={jwtToken ? <Navigate to="/dashboard" /> : <Home />}
+          />
           <Route path="/about" element={<About />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />

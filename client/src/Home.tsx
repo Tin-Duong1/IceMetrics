@@ -1,6 +1,6 @@
 import { Slide } from "@mui/material";
-import Features from "./components/Features";
-import Hero from "./components/Hero";
+import Features from "./components/Landing/Features";
+import Hero from "./components/Landing/Hero";
 import AnimatedHome from "./components/animations/AnimatedLayout";
 import AnimatedLayout from "./components/animations/AnimatedLayout";
 
