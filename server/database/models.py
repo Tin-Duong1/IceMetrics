@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated, Optional, List  # Import List for type hinting
 from datetime import datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -9,13 +9,13 @@ class UserInfo(SQLModel, table=True):
     name : str = Field(max_length=255)
     email: str = Field(max_length=255)
     password: str = Field(max_length=255)
-    videos: list["VideoStatistics"] = Relationship(back_populates="user")
+    videos: List["Video"] = Relationship(back_populates="user")
 
-class VideoStatistics(SQLModel, table=True):
+class Video(SQLModel, table=True):
     video_id: int = Field(primary_key=True)
-    title: str = Field(max_length=255)
-    description: str = Field(max_length=255)
-    user_id : int = Field(foreign_key="userinfo.user_id")
-    user : UserInfo = Relationship(back_populates="videos")
-    
-    
+    name: str = Field(max_length=255)  # Add the name field
+    datetime_uploaded: datetime = Field(default_factory=datetime.utcnow)
+    duration: int = Field()  # Duration in seconds
+    user_id: int = Field(foreign_key="userinfo.user_id")
+    user: UserInfo = Relationship(back_populates="videos")
+
