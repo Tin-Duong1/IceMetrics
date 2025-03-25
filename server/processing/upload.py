@@ -1,4 +1,4 @@
-import cv2  # Python OpenCV
+import cv2 
 import os
 import datetime
 
@@ -10,7 +10,7 @@ from typing import Annotated
 from database.database_setup import SessionDep
 from utilities.utilities import add_video_to_user, get_videos_by_user
 from database.models import Video
-from utilities.security import get_current_user, get_user_by_email  # Assuming these dependencies exist
+from utilities.security import get_current_user, get_user_by_email 
 from database.models import UserInfo
 
 
