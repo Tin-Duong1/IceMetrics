@@ -4,7 +4,6 @@ import datetime
 
 from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from typing import Annotated
 
 
 from database.database_setup import SessionDep
@@ -27,13 +26,11 @@ async def upload_video(
     email = current_user
     print(f"Email: {email}, Video Name: {name}")
 
-    # Save the file temporarily
     temp_path = f"/tmp/{video.filename}"
     with open(temp_path, "wb") as temp_file:
         temp_file.write(await video.read())
 
     try:
-        # Calculate video duration using OpenCV
         cap = cv2.VideoCapture(temp_path)
         if not cap.isOpened():
             raise Exception("Could not open video file")
@@ -43,7 +40,6 @@ async def upload_video(
         duration = frame_count / fps if fps > 0 else 0
         cap.release()
 
-        # Add video to the user's account
         video_data = {
             "name": name,
             "datetime_uploaded": datetime.datetime.utcnow(),
@@ -51,7 +47,6 @@ async def upload_video(
         }
         added_video = add_video_to_user(session, email, video_data)
 
-        # Delete the temporary file
         os.remove(temp_path)
 
         return {
@@ -61,7 +56,6 @@ async def upload_video(
             "duration": added_video.duration,
         }
     except Exception as e:
-        # Ensure the temporary file is deleted even if an error occurs
         if os.path.exists(temp_path):
             os.remove(temp_path)
         raise HTTPException(status_code=500, detail=f"Error processing video: {e}")
