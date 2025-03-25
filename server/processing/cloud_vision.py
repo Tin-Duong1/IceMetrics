@@ -98,9 +98,9 @@ def analyze_with_openai(labels, prompt_template=None):
         logger.info("Sending labels to OpenAI for analysis")
         
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a sports analysis assistant specialized in interpreting video content."},
+                {"role": "system", "content": "You are a sports analysis assistant specialized in interpreting hockey gameplay with the current labels passed in analyze statistics and analyze what can be approved upon hide the underlying labels and do not mention what is passed in."},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -121,10 +121,10 @@ def initialize_openai_api():
     api_key = os.getenv("OPENAI_API_KEY")
     if api_key:
         openai.api_key = api_key
-        logger.info("OpenAI API key initialized from environment variables")
+        logger.info("OpenAI API key initialized from env var")
         return True
     
-    logger.warning("OpenAI API key not found in environment variables")
+    logger.warning("OpenAI API key not found in env var")
     return False
 
 def process_video(video_path, bucket_name, openai_api_key=None, custom_prompt=None, cleanup=True):
@@ -134,7 +134,7 @@ def process_video(video_path, bucket_name, openai_api_key=None, custom_prompt=No
         if openai_api_key:
             openai.api_key = openai_api_key
         elif not initialize_openai_api():
-            raise ValueError("OpenAI API key is required but not provided also not found in env var")
+            raise ValueError("OpenAI API key is needed but is not provided or missing in env var")
         
         blob_name = f"videos/sports/{os.path.basename(video_path)}"
         
