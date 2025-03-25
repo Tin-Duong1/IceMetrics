@@ -29,36 +29,8 @@ async def upload_video(
     temp_path = f"/tmp/{video.filename}"
     with open(temp_path, "wb") as temp_file:
         temp_file.write(await video.read())
-
-    try:
-        cap = cv2.VideoCapture(temp_path)
-        if not cap.isOpened():
-            raise Exception("Could not open video file")
-        
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        duration = frame_count / fps if fps > 0 else 0
-        cap.release()
-
-        video_data = {
-            "name": name,
-            "datetime_uploaded": datetime.datetime.utcnow(),
-            "duration": int(duration),
-        }
-        added_video = add_video_to_user(session, email, video_data)
-
         os.remove(temp_path)
-
-        return {
-            "message": "Video uploaded successfully",
-            "video_id": added_video.video_id,
-            "name": added_video.name,
-            "duration": added_video.duration,
-        }
-    except Exception as e:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
-        raise HTTPException(status_code=500, detail=f"Error processing video: {e}")
+        
 
 @router.get('/videos')
 async def get_user_videos(

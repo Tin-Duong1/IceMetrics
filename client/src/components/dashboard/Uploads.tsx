@@ -50,7 +50,7 @@ function Uploads() {
 
     try {
       const token = localStorage.getItem("jwt_token"); // Retrieve token from localStorage
-      await axios.post("/api/upload", formData, {
+      await axios.post("/api/analyze_video", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
