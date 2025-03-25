@@ -6,18 +6,9 @@ from contextlib import asynccontextmanager
 from utilities.auth import router as auth_router
 from routes.user_routes import router as user_router
 from processing.upload import router as upload_router
-
-#from database.database_setup import create_db_and_tables
-
-#@asynccontextmanager
-#async def lifespan(app: FastAPI):
-#        create_db_and_tables()
-#        yield
-        # No need to yield app here
+from routes.processing_routes import router as processing_router  # Add this line
 
 # creates the FastAPI instance
-
-#app = FastAPI(lifespan=lifespan)
 
 app = FastAPI()
 
@@ -39,7 +30,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(upload_router)
-
+app.include_router(processing_router)
 
 # root route
 @app.get("/")

@@ -127,14 +127,14 @@ def initialize_openai_api():
     logger.warning("OpenAI API key not found in environment variables")
     return False
 
-def process_sports_video(video_path, bucket_name, openai_api_key=None, custom_prompt=None, cleanup=True):
+def process_video(video_path, bucket_name, openai_api_key=None, custom_prompt=None, cleanup=True):
     
     blob = None
     try:
         if openai_api_key:
             openai.api_key = openai_api_key
         elif not initialize_openai_api():
-            raise ValueError("OpenAI API key is required but not provided and not found in environment variables")
+            raise ValueError("OpenAI API key is required but not provided also not found in env var")
         
         blob_name = f"videos/sports/{os.path.basename(video_path)}"
         
@@ -145,7 +145,7 @@ def process_sports_video(video_path, bucket_name, openai_api_key=None, custom_pr
         labels = process_video_with_vision(gcs_uri)
         
         if not labels:
-            logger.warning("No labels detected in the video. Analysis might be limited.")
+            logger.warning("No labels detected in the video.")
         
         openai_analysis = analyze_with_openai(labels, custom_prompt)
         
@@ -168,7 +168,7 @@ def process_sports_video(video_path, bucket_name, openai_api_key=None, custom_pr
                 delete_from_gcs(blob)
                 logger.info("Cleaned up blob after error")
             except Exception as cleanup_error:
-                logger.error(f"Failed to clean up blob after error: {cleanup_error}")
+                logger.error(f"Failed to delete blob after error: {cleanup_error}")
         
-        logger.error(f"Error in video processing pipeline: {e}")
+        logger.error(f"Error in video processing pipeline printing error: {e}")
         raise
