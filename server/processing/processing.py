@@ -56,7 +56,6 @@ class HockeyAnalytics:
                 x1, y1, x2, y2 = box.xyxy[0].tolist()
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                 
-                # Get confidence score
                 confidence = box.conf[0].item() if hasattr(box, 'conf') else 0.0
                 
                 center_x = (x1 + x2) // 2
@@ -95,7 +94,6 @@ class HockeyAnalytics:
             if min_contour_area < area < max_contour_area:
                 x, y, w, h = cv2.boundingRect(contour)
                 
-                # Apply aspect ratio filter for human shapes
                 aspect_ratio = float(h) / w
                 if 1.2 < aspect_ratio < 4.0:
                     padding_x = int(w * 0.15)
@@ -159,73 +157,60 @@ class HockeyAnalytics:
             self.stats['left_side']['time'] += time_delta
         elif self.current_side_with_more == 'right':
             self.stats['right_side']['time'] += time_delta
-        # No time is added if counts are equal (neutral)
     
     def draw_visualization(self, frame, players_by_side):
         """Draw visualization elements on frame"""
         result = frame.copy()
         
-        # Draw center line
         cv2.line(result, (self.center_x, 0), (self.center_x, frame.shape[0]), 
                 (255, 255, 255), 2)
         
-        # Draw players on each side with different colors
-        # Left side - Blue
         for player in players_by_side['left']:
             x1, y1, x2, y2 = player['box']
-            cv2.rectangle(result, (x1, y1), (x2, y2), (255, 0, 0), 2)  # Blue
+            cv2.rectangle(result, (x1, y1), (x2, y2), (255, 0, 0), 2) 
             
-            # Draw confidence if using YOLO
             if self.using_yolo and 'confidence' in player:
                 conf_text = f"{player['confidence']:.2f}"
                 cv2.putText(result, conf_text, (x1, y1 - 5),
                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
         
-        # Right side - Red
         for player in players_by_side['right']:
             x1, y1, x2, y2 = player['box']
-            cv2.rectangle(result, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Red
+            cv2.rectangle(result, (x1, y1), (x2, y2), (0, 0, 255), 2)  
             
-            # Draw confidence if using YOLO
             if self.using_yolo and 'confidence' in player:
                 conf_text = f"{player['confidence']:.2f}"
                 cv2.putText(result, conf_text, (x1, y1 - 5),
                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
         
-        # Display side labels
         cv2.putText(result, "Left Side", (10, frame.shape[0] - 10), 
                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
         cv2.putText(result, "Right Side", (frame.shape[1] - 120, frame.shape[0] - 10), 
                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
         
-        # Display player counts by side
         left_count = self.stats['left_side']['count']
         right_count = self.stats['right_side']['count']
         
-        # Add highlight for the side with more players
-        left_color = (255, 255, 255)  # Default white
-        right_color = (255, 255, 255)  # Default white
+        left_color = (255, 255, 255) 
+        right_color = (255, 255, 255)  
         
         if self.current_side_with_more == 'left':
-            left_color = (255, 255, 0)  # Cyan for the side with more players
+            left_color = (255, 255, 0)  
         elif self.current_side_with_more == 'right':
-            right_color = (255, 255, 0)  # Cyan for the side with more players
+            right_color = (255, 255, 0)  
         
         cv2.putText(result, f"Left count: {left_count}", 
                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, left_color, 2)
         cv2.putText(result, f"Right count: {right_count}", 
                    (frame.shape[1] - 180, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, right_color, 2)
         
-        # Display time statistics
         left_time = self.stats['left_side']['time']
         right_time = self.stats['right_side']['time']
         total_time = left_time + right_time
         
-        # Format time as MM:SS
         left_time_str = f"{int(left_time/60):02d}:{int(left_time%60):02d}"
         right_time_str = f"{int(right_time/60):02d}:{int(right_time%60):02d}"
         
-        # Calculate percentages
         if total_time > 0:
             left_pct = (left_time / total_time) * 100
             right_pct = (right_time / total_time) * 100
@@ -237,7 +222,6 @@ class HockeyAnalytics:
         cv2.putText(result, f"Right time: {right_time_str} ({right_pct:.1f}%)", 
                    (frame.shape[1] - 280, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
         
-        # Add detection method info
         method_text = "YOLO Detection" if self.using_yolo else "Contour Detection"
         cv2.putText(result, method_text, (frame.shape[1] // 2 - 80, 30),
                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
@@ -246,7 +230,6 @@ class HockeyAnalytics:
     
     def process_frame(self, frame):
         """Process a single frame and update all analytics"""
-        # Calculate time delta from last frame
         current_time = time.time()
         if self.last_frame_time is None:
             time_delta = 0
@@ -254,16 +237,12 @@ class HockeyAnalytics:
             time_delta = current_time - self.last_frame_time
         self.last_frame_time = current_time
         
-        # Detect players
         player_boxes = self.detect_players(frame)
         
-        # Count players by side
         players_by_side = self.count_players_by_side(player_boxes)
         
-        # Update statistics
         self.update_statistics(time_delta)
         
-        # Create visualization
         result_frame = self.draw_visualization(frame, players_by_side)
         
         return result_frame
@@ -272,7 +251,6 @@ def main():
     """Main function to run hockey analytics automatically"""
     import os
     
-    # Find video file
     possible_paths = [
         './hello.mov', 
         './tmp_videos/trimmed_clip.mp4',
@@ -281,13 +259,11 @@ def main():
         '/Users/tinduong/Documents/GitHub/IceMetrics/tmp_videos/trimmed_clip.mp4'
     ]
     
-    # Add any video files from current directory
     video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
     for file in os.listdir('.'):
         if any(file.endswith(ext) for ext in video_extensions):
             possible_paths.insert(0, file)
     
-    # Try to open video file
     cap = None
     for path in possible_paths:
         print(f"Trying: {path}")
@@ -298,7 +274,6 @@ def main():
         else:
             cap = None
     
-    # Use webcam if no video file found
     if cap is None:
         print("No video file found, trying webcam")
         cap = cv2.VideoCapture(0)
@@ -306,40 +281,32 @@ def main():
             print("Could not access webcam or any video files")
             return
     
-    # Read first frame
     ret, first_frame = cap.read()
     if not ret:
         print("Failed to read first frame")
         return
     
-    # Initialize analytics
     analytics = HockeyAnalytics()
     analytics.define_zones(first_frame.shape)
     
-    # Reset video to beginning
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     
-    # Create window
     cv2.namedWindow("Player Position Analytics", cv2.WINDOW_NORMAL)
     
     print("\n===== PLAYER POSITION ANALYTICS =====")
     print("Press 'q' to quit")
     print("===================================\n")
     
-    # Process video
     frame_count = 0
     while True:
         ret, frame = cap.read()
         if not ret:
             break
         
-        # Process frame
         result_frame = analytics.process_frame(frame)
         
-        # Display result
         cv2.imshow("Player Position Analytics", result_frame)
         
-        # Check for quit key
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
