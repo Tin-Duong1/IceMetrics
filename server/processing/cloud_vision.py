@@ -184,7 +184,6 @@ def analyze_with_openai(labels, prompt_template=None):
                     "confidence": label["score"]
                 })
             elif "track_id" in label:
-                # For object tracks
                 track_id = label["track_id"]
                 if track_id not in objects_by_track:
                     objects_by_track[track_id] = label
@@ -198,7 +197,6 @@ def analyze_with_openai(labels, prompt_template=None):
         for track_id, obj in objects_by_track.items():
             objects_text.append(f"- {obj['description']} (confidence: {obj['score']:.2f})")
         
-        # Create the final input for OpenAI
         labels_text = "TIME SEGMENTS:\n" + "\n".join(time_segments) + "\n\nDETECTED OBJECTS:\n" + "\n".join(objects_text)
         
         if prompt_template:
@@ -208,11 +206,11 @@ def analyze_with_openai(labels, prompt_template=None):
             
 {labels_text}
 
-Please provide detailed insights about the hockey game shown, including:
-1. Key players and their actions
-2. Game style and techniques observed
-3. Any notable plays or moments
-4. Areas for potential improvement
+Please provide detailed in the format with values according to the label each in a new line:
+Possesion
+Shot on goal 
+Defensive time
+Offensive time
 
 Focus on hockey-specific analysis."""
         
@@ -221,10 +219,10 @@ Focus on hockey-specific analysis."""
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a sports analysis assistant specialized in interpreting hockey gameplay with the current labels passed in analyze statistics and analyze what can be approved upon hide the underlying labels and do not mention what is passed in."},
+                {"role": "system", "content": "Based on the labels provided, out put the analysis in the form of possession: value in seconds, Shot on goal : value number of shots, Defensive time: value in seconds, Offensive time: value in seconds format this so each is on a new line seperated by the colon"},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=120,
+            max_tokens=100,
             temperature=0.7
         )
         
