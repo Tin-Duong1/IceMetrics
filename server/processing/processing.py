@@ -6,7 +6,6 @@ from ultralytics import YOLO
 
 class HockeyAnalytics:
     def __init__(self):
-        # Statistics tracking
         self.stats = {
             'left_side': {
                 'time': 0,
@@ -18,9 +17,8 @@ class HockeyAnalytics:
             }
         }
         
-        self.current_side_with_more = 'neutral'  # 'left', 'right', or 'neutral'
+        self.current_side_with_more = 'neutral' 
         
-        # Center line position
         self.center_x = None
         
         self.last_frame_time = None
