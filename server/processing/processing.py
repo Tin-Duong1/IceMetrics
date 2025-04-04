@@ -251,35 +251,21 @@ def main():
     """Main function to run hockey analytics automatically"""
     import os
     
-    possible_paths = [
-        './hello.mov', 
-        './tmp_videos/trimmed_clip.mp4',
-        '../tmp_videos/trimmed_clip.mp4',
-        '../../tmp_videos/trimmed_clip.mp4',
-        '/Users/tinduong/Documents/GitHub/IceMetrics/tmp_videos/trimmed_clip.mp4'
-    ]
+    video_path = './trimmed_clip.mp4'  
     
-    video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
-    for file in os.listdir('.'):
-        if any(file.endswith(ext) for ext in video_extensions):
-            possible_paths.insert(0, file)
+    print(f"Attempting to open video from: {video_path}")
+    cap = cv2.VideoCapture(video_path)
     
-    cap = None
-    for path in possible_paths:
-        print(f"Trying: {path}")
-        cap = cv2.VideoCapture(path)
-        if cap.isOpened():
-            print(f"Using video: {path}")
-            break
-        else:
-            cap = None
-    
-    if cap is None:
-        print("No video file found, trying webcam")
-        cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print(f"Could not open video file: {video_path}")
+        print("Checking if webcam is available...")
+        cap = cv2.VideoCapture(0)  # Try webcam as fallback
         if not cap.isOpened():
-            print("Could not access webcam or any video files")
+            print("Could not access webcam either. Exiting.")
             return
+        print("Using webcam instead")
+    else:
+        print(f"Successfully opened video: {video_path}")
     
     ret, first_frame = cap.read()
     if not ret:
