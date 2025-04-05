@@ -14,6 +14,7 @@ import Search from "./Search";
 import { Notifications } from "@mui/icons-material";
 import Uploads from "./Uploads";
 import Feedback from "./Feedback/Feedback";
+import Analysis from "./Analysis/Analysis";
 
 function Dashboard() {
   const [activePage, setActivePage] = useState(() => {
@@ -26,6 +27,8 @@ function Dashboard() {
 
   const renderPage = () => {
     switch (activePage) {
+      case "Analytics":
+        return <Analysis />;
       case "Settings":
         return <Settings />;
       case "Home":
@@ -34,6 +37,7 @@ function Dashboard() {
         return <Uploads />;
       case "Feedback":
         return <Feedback />;
+
       default:
         return <div>{activePage}</div>; // Placeholder for other pages
     }
