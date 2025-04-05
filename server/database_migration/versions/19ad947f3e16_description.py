@@ -1,19 +1,20 @@
-"""Added summary to the database
+"""description
 
-Revision ID: 60c2c6e2efa3
-Revises: 7bf7371b4370
-Create Date: 2025-04-05 15:10:42.610140
+Revision ID: 19ad947f3e16
+Revises: 
+Create Date: 2025-04-05 15:43:02.597828
 
 """
 from typing import Sequence, Union
 
+import sqlmodel
 from alembic import op
 import sqlalchemy as sa
-import sqlmodel
+
 
 # revision identifiers, used by Alembic.
-revision: str = '60c2c6e2efa3'
-down_revision: Union[str, None] = '7bf7371b4370'
+revision: str = '19ad947f3e16'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

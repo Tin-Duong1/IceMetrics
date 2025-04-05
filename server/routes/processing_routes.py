@@ -11,7 +11,7 @@ from utilities.utilities import add_video_to_user, get_user_by_email, get_videos
 from processing.processing import HockeyAnalytics
 from processing.open_ai_summary import summarize_stats
 from dotenv import load_dotenv
-
+from database.models import Video  # Add this import for the Video model
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -138,3 +138,36 @@ async def get_user_videos(
     videos = get_videos_by_user(session, user.user_id)
     
     return videos
+
+@router.get('/video/{video_id}/analysis')
+async def get_video_analysis(
+    video_id: int,
+    session: SessionDep,
+    current_user: str = Depends(get_current_user)
+):
+    """Get analysis details for a specific video by ID"""
+    user = get_user_by_email(session, current_user)
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    video = session.query(Video).filter(Video.video_id == video_id, Video.user_id == user.user_id).first()
+    
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    return {
+        "video_id": video.video_id,
+        "name": video.name,
+        "duration": video.duration,
+        "stats": {
+            "left_side": {
+                "time": video.left_side_time,
+                "percentage": video.left_side_percentage
+            },
+            "right_side": {
+                "time": video.right_side_time,
+                "percentage": video.right_side_percentage
+            }
+        }
+    }
