@@ -23,7 +23,6 @@ import {
   BarElement,
   Tooltip,
 } from "chart.js";
-import RinkSplitHeatmap from "../RinkHeatmap";
 import StatCard2 from "../Cards/StatCard2";
 import { LineChart, PieChart } from "@mui/x-charts";
 
@@ -58,55 +57,19 @@ function Analysis() {
 
     try {
       const token = localStorage.getItem("jwt_token");
+      if (!token) {
+        console.error("No token found in localStorage.");
+        return;
+      }
       const response = await axios.get(`/api/video/${videoId}/analysis`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAnalysis(response.data);
     } catch (error) {
       console.error("Error fetching analysis:", error);
-      setAnalysis("Failed to fetch analysis.");
+      setAnalysis(null); // Set to null instead of a string for consistency
     }
   };
-
-  const generateHeatmapData = () => {
-    if (!analysis || !analysis.stats) return null;
-
-    return {
-      labels: ["Left Side", "Right Side"],
-      datasets: [
-        {
-          label: "Time (seconds)",
-          data: [analysis.stats.left_side.time, analysis.stats.right_side.time],
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.6)",
-            "rgba(255, 99, 132, 0.6)",
-          ],
-        },
-        {
-          label: "Percentage (%)",
-          data: [
-            analysis.stats.left_side.percentage,
-            analysis.stats.right_side.percentage,
-          ],
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.3)",
-            "rgba(255, 99, 132, 0.3)",
-          ],
-        },
-      ],
-    };
-  };
-
-  const heatmapData = generateHeatmapData();
-
-  const dataset = [
-    { x: "00:00", y: 10 },
-    { x: "00:10", y: 20 },
-    { x: "00:20", y: 15 },
-    { x: "00:30", y: 25 },
-    { x: "00:40", y: 30 },
-    { x: "00:50", y: 20 },
-  ];
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -144,9 +107,6 @@ function Analysis() {
               ))}
             </Select>
           </FormControl>
-          <Button variant="contained" sx={{ height: 42, background: "red" }}>
-            Delete Video
-          </Button>
         </Box>
       </Box>
       <Divider />
@@ -156,8 +116,10 @@ function Analysis() {
             <Box
               sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 padding: 2,
-                alignItems: "center",
+                gap: 4,
+                flexWrap: { xs: "wrap", lg: "nowrap" },
               }}
             >
               <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
@@ -169,7 +131,7 @@ function Analysis() {
                       border: "0.5px solid grey",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginBottom: 6,
+                      marginBottom: 10,
                     }}
                   >
                     <Typography
@@ -199,52 +161,62 @@ function Analysis() {
                   <ListItem>
                     <ListItemText
                       primary="Objects"
-                      secondary={`22.212 objects per second`}
+                      secondary={`${
+                        analysis?.stats?.average_players_per_second?.length
+                          ? (
+                              analysis.stats.average_players_per_second.reduce(
+                                (sum: number, value: number) => sum + value,
+                                0
+                              ) /
+                              analysis.stats.average_players_per_second.length
+                            ).toFixed(3)
+                          : "N/A"
+                      } persons per second`}
                     />
                   </ListItem>
                   <Divider />
                 </List>
               </Box>
-              <LineChart
-                xAxis={[
-                  {
-                    data: (() => {
-                      const duration = analysis?.duration || 0;
-                      let interval = 1;
-
-                      if (duration > 300) interval = 30;
-                      else if (duration > 100) interval = 10;
-                      else if (duration > 50) interval = 5;
-
-                      return Array.from(
-                        { length: Math.ceil(duration / interval) },
-                        (_, i) => i * interval
-                      );
-                    })(),
-                  },
-                ]}
-                series={[
-                  {
-                    data: (() => {
-                      const duration = analysis?.duration || 0;
-                      let interval = 1;
-
-                      if (duration > 300) interval = 30;
-                      else if (duration > 100) interval = 10;
-                      else if (duration > 50) interval = 5;
-
-                      return Array.from(
-                        { length: Math.ceil(duration / interval) },
-                        () => parseFloat((Math.random() * 10).toFixed(2))
-                      );
-                    })(),
-                    valueFormatter: (value) =>
-                      value == null ? "NaN" : value.toString(),
-                  },
-                ]}
-                grid={{ vertical: true, horizontal: true }}
-                height={400}
-              />
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ textAlign: "center", marginTop: 2 }}
+                >
+                  Average Players Detected Over Time
+                </Typography>
+                <LineChart
+                  xAxis={[
+                    {
+                      data: analysis?.stats?.average_players_per_second?.length
+                        ? Array.from(
+                            {
+                              length:
+                                analysis.stats.average_players_per_second
+                                  .length,
+                            },
+                            (_, i) => (i + 1) * 50 // Generate x-axis labels as frame numbers
+                          )
+                        : [],
+                      label: "Frame Number", // Add x-axis label
+                    },
+                  ]}
+                  yAxis={[
+                    {
+                      data: [], // Placeholder for y-axis data
+                      label: "Average Players Detected (per 50 frames)", // Add y-axis label
+                    },
+                  ]}
+                  series={[
+                    {
+                      data: analysis?.stats?.average_players_per_second || [],
+                      valueFormatter: (value) =>
+                        value == null ? "NaN" : value.toFixed(2), // Format values to 2 decimal places
+                    },
+                  ]}
+                  grid={{ vertical: true, horizontal: true }}
+                  height={350}
+                />
+              </Box>
             </Box>
             <Divider />
             <Box
