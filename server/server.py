@@ -5,11 +5,9 @@ from contextlib import asynccontextmanager
 
 from utilities.auth import router as auth_router
 from routes.user_routes import router as user_router
-from processing.upload import router as upload_router
-from routes.processing_routes import router as processing_router  # Add this line
+from routes.processing_routes import router as processing_router
 
 # creates the FastAPI instance
-
 app = FastAPI()
 
 # origins that are allowed to make requests to the server
@@ -29,7 +27,6 @@ app.add_middleware(
 # connects to the authentication routes
 app.include_router(auth_router)
 app.include_router(user_router)
-app.include_router(upload_router)
 app.include_router(processing_router)
 
 # root route

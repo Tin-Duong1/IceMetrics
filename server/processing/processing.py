@@ -301,7 +301,6 @@ def main():
         if frame_count % 100 == 0:
             print(f"Processed {frame_count} frames")
     
-    # Print final statistics
     print("\n===== FINAL PLAYER POSITION STATISTICS =====")
     left_time = analytics.stats['left_side']['time']
     right_time = analytics.stats['right_side']['time']
