@@ -1,5 +1,6 @@
 from typing import Annotated, Optional, List  # Import List for type hinting
 from datetime import datetime
+from sqlalchemy import JSON  # Add this import
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Column, Relationship
@@ -21,5 +22,6 @@ class Video(SQLModel, table=True):
     left_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on left side
     right_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on right side
     summary: Optional[str] = Field(default=None)  # Summary of the video
+    average_players_per_second: Optional[List[float]] = Field(default=None, sa_column=Column(JSON))
     user_id: int = Field(foreign_key="userinfo.user_id")
     user: UserInfo = Relationship(back_populates="videos")

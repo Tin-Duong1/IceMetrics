@@ -23,6 +23,11 @@ class HockeyAnalytics:
         
         self.last_frame_time = None
         
+        self.total_player_count = 0
+        self.frame_count_in_second = 0
+        self.last_second_time = None
+        self.average_players_per_second = []
+        
         try:
             self.yolo_model = YOLO("yolov8n.pt")
             self.using_yolo = True
@@ -237,15 +242,36 @@ class HockeyAnalytics:
             time_delta = current_time - self.last_frame_time
         self.last_frame_time = current_time
         
+        # Detect players
         player_boxes = self.detect_players(frame)
         
+        # Count players and update statistics
         players_by_side = self.count_players_by_side(player_boxes)
-        
         self.update_statistics(time_delta)
         
+        # Update player count tracking
+        self.total_player_count += len(player_boxes)
+        self.frame_count_in_second += 1
+        
+        # Calculate average players per second
+        if self.last_second_time is None:
+            self.last_second_time = current_time
+        elif current_time - self.last_second_time >= 1.0:
+            average = self.total_player_count / self.frame_count_in_second
+            self.average_players_per_second.append(average)
+            print(f"Average players per second: {average:.2f}")  # Debug output
+            self.total_player_count = 0
+            self.frame_count_in_second = 0
+            self.last_second_time = current_time
+        
+        # Draw visualization
         result_frame = self.draw_visualization(frame, players_by_side)
         
         return result_frame
+
+    def get_average_players_per_second(self):
+        """Return the list of average players per second for database storage"""
+        return self.average_players_per_second
 
 def main():
     """Main function to run hockey analytics automatically"""

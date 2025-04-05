@@ -53,16 +53,25 @@ async def analyze_video(
         frame_count = 0
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         
-        sample_rate = 10
+        fps = cap.get(cv2.CAP_PROP_FPS)  # Get frames per second
+        frames_per_second = int(fps) if fps > 0 else 1  # Ensure valid FPS
+        
         while True:
             ret, frame = cap.read()
             if not ret:
                 break
                 
-            if frame_count % sample_rate == 0:
-                analytics.process_frame(frame)
-                
+            # Process every frame to calculate accurate per-second data
+            analytics.process_frame(frame)
+            
             frame_count += 1
+            
+        # Ensure the average_players_per_second has one data point per second
+        total_seconds = int(frame_count / frames_per_second)
+        if len(analytics.average_players_per_second) < total_seconds:
+            analytics.average_players_per_second.extend(
+                [0] * (total_seconds - len(analytics.average_players_per_second))
+            )
             
         left_time = analytics.stats['left_side']['time']
         right_time = analytics.stats['right_side']['time']
@@ -70,6 +79,9 @@ async def analyze_video(
         
         left_percentage = round((left_time / total_time) * 100, 1) if total_time > 0 else 0
         right_percentage = round((right_time / total_time) * 100, 1) if total_time > 0 else 0
+        
+        # Retrieve average players per second
+        average_players_per_second = analytics.get_average_players_per_second()
         
         # Save video info to the database
         with Session(engine) as session:
@@ -81,12 +93,12 @@ async def analyze_video(
                 "left_side_time": left_time,
                 "right_side_time": right_time,
                 "left_side_percentage": left_percentage,
-                "right_side_percentage": right_percentage
+                "right_side_percentage": right_percentage,
+                "average_players_per_second": average_players_per_second  # Add this to stats
             }
             
             summary = summarize_stats(stats)
-            print (f"Summary: {summary}")
-            
+            print(f"Summary: {summary}")
             
             video_data = {
                 "name": name,
@@ -95,6 +107,7 @@ async def analyze_video(
                 "right_side_time": right_time,
                 "left_side_percentage": left_percentage,
                 "right_side_percentage": right_percentage,
+                "average_players_per_second": average_players_per_second,  # Add this to video data
                 "summary": summary
             }
             
@@ -112,7 +125,8 @@ async def analyze_video(
                 "right_side": {
                     "time": int(right_time),
                     "percentage": right_percentage
-                }
+                },
+                "average_players_per_second": average_players_per_second  # Include in response
             },
             "summary": summary
         }
@@ -168,6 +182,7 @@ async def get_video_analysis(
             "right_side": {
                 "time": video.right_side_time,
                 "percentage": video.right_side_percentage
-            }
+            },
+            "average_players_per_second": video.average_players_per_second  # Include in response
         }
     }
