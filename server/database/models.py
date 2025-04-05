@@ -13,12 +13,13 @@ class UserInfo(SQLModel, table=True):
 
 class Video(SQLModel, table=True):
     video_id: int = Field(primary_key=True)
-    name: str = Field(max_length=255)  # Add the name field
+    name: str = Field(max_length=255)
     datetime_uploaded: datetime = Field(default_factory=datetime.utcnow)
     duration: int = Field()  # Duration in seconds
     left_side_time: Optional[float] = Field(default=0.0)  # Time spent on left side in seconds
     right_side_time: Optional[float] = Field(default=0.0)  # Time spent on right side in seconds
     left_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on left side
     right_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on right side
+    summary: Optional[str] = Field(default=None)  # Summary of the video
     user_id: int = Field(foreign_key="userinfo.user_id")
     user: UserInfo = Relationship(back_populates="videos")

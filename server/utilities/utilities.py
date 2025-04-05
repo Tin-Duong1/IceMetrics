@@ -18,7 +18,6 @@ def add_video_to_user(db: Session, email: str, video_data: dict) -> Video:
     if not user:
         raise ValueError("User not found")
 
-    # Use user.user_id instead of email
     video = Video(user_id=user.user_id, **video_data)
     db.add(video)
     db.commit()
@@ -29,7 +28,7 @@ def get_videos_by_user(db: Session, user_id: int):
     return db.exec(select(Video).where(Video.user_id == user_id)).all()
 
 def get_user_stats(db: Session, user_id: int):
-    user = get_user_by_id(db, user_id)  # Use get_user_by_id instead of get_user_by_email
+    user = get_user_by_id(db, user_id)
     if not user:
         raise ValueError("User not found")
 
@@ -44,7 +43,6 @@ def remove_user(db: Session, user_id: int) -> None:
     if not user:
         raise ValueError("User not found")
     
-    # Remove all videos associated with the user
     videos = get_videos_by_user(db, user_id)
     for video in videos:
         db.delete(video)
@@ -54,7 +52,7 @@ def remove_user(db: Session, user_id: int) -> None:
     db.commit()
 
 def remove_video_from_user(db: Session, video_id: int) -> None:
-    video = db.exec(select(Video).where(Video.video_id == video_id)).first()  # Use video.video_id
+    video = db.exec(select(Video).where(Video.video_id == video_id)).first()
     if not video:
         raise ValueError("Video not found")
     db.delete(video)

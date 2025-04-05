@@ -9,6 +9,7 @@ from utilities.security import get_current_user
 from database.database_setup import *
 from utilities.utilities import add_video_to_user, get_user_by_email, get_videos_by_user
 from processing.processing import HockeyAnalytics
+from processing.open_ai_summary import summarize_stats
 from dotenv import load_dotenv
 
 
@@ -75,14 +76,26 @@ async def analyze_video(
             user = get_user_by_email(session, current_user)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
-                
+            
+            stats = {
+                "left_side_time": left_time,
+                "right_side_time": right_time,
+                "left_side_percentage": left_percentage,
+                "right_side_percentage": right_percentage
+            }
+            
+            summary = summarize_stats(stats)
+            print (f"Summary: {summary}")
+            
+            
             video_data = {
                 "name": name,
                 "duration": duration,
                 "left_side_time": left_time,
                 "right_side_time": right_time,
                 "left_side_percentage": left_percentage,
-                "right_side_percentage": right_percentage
+                "right_side_percentage": right_percentage,
+                "summary": summary
             }
             
             new_video = add_video_to_user(session, current_user, video_data)
@@ -100,7 +113,8 @@ async def analyze_video(
                     "time": int(right_time),
                     "percentage": right_percentage
                 }
-            }
+            },
+            "summary": summary
         }
     
     except Exception as e:
