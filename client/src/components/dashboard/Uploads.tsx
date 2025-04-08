@@ -13,8 +13,9 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
+import { UploadRounded, FileUpload } from "@mui/icons-material"; // Import FileUpload icon
+import { useDropzone } from "react-dropzone"; // Import react-dropzone
 import axios from "axios";
-import { UploadRounded } from "@mui/icons-material";
 
 function Uploads() {
   const [video, setVideo] = useState<File | null>(null);
@@ -28,10 +29,15 @@ function Uploads() {
   >([]);
   const [videoName, setVideoName] = useState<string>("");
 
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setVideo(file || null);
+  const onDrop = (acceptedFiles: File[]) => {
+    setVideo(acceptedFiles[0] || null); // Set the first dropped file
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "video/*": [] }, // Accept only video files
+    multiple: false,
+  });
 
   const handleUpload = async () => {
     if (!video) {
@@ -104,12 +110,58 @@ function Uploads() {
   }, []);
 
   return (
-    <Stack spacing={4} sx={{ padding: 2 }}>
-      <Stack gap={4}>
-        <Typography variant="h6" gutterBottom>
-          Upload a Video
-        </Typography>
-        <Stack gap={1}>
+    <Stack
+      spacing={4}
+      direction={"row"}
+      sx={{
+        padding: 2,
+        flexWrap: "wrap",
+      }}
+    >
+      <Stack flexGrow={1}>
+        <Box marginBottom={2}>
+          <Typography variant="h6">Upload a Video</Typography>
+          <Typography variant="caption">
+            Upload a video file to analyze. Supported format is .mp4 or .mov.
+          </Typography>
+        </Box>
+        <Stack gap={1} direction={"column"} marginBottom={2}>
+          <Box
+            {...getRootProps()}
+            sx={{
+              border: "2px dashed #ccc",
+              borderRadius: 2,
+              padding: 2,
+              textAlign: "center",
+              cursor: "pointer",
+              backgroundColor: isDragActive ? "#f0f0f0" : "transparent",
+              ":hover": {
+                backgroundColor: "#f0f0f0",
+              },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "300px",
+            }}
+          >
+            <input {...getInputProps()} />
+            <FileUpload sx={{ fontSize: 40, color: "#888" }} />
+            {video ? (
+              <>
+                <Typography variant="body1">{video.name}</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {(video.size / (1024 * 1024)).toFixed(2)} MB
+                </Typography>
+              </>
+            ) : isDragActive ? (
+              <Typography>Drop the video here...</Typography>
+            ) : (
+              <Typography>
+                Drag and drop a video file here, or click to select one
+              </Typography>
+            )}
+          </Box>
           <TextField
             type="text"
             value={videoName}
@@ -117,7 +169,6 @@ function Uploads() {
             placeholder="Video Name"
             style={{ width: "100%" }}
           />
-          <TextField type="file" onChange={handleVideoChange} fullWidth />
         </Stack>
 
         <Button

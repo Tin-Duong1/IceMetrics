@@ -77,7 +77,6 @@ function Dashboard() {
               </Typography>
             </Breadcrumbs>
             <Stack direction={"row"} spacing={2} alignItems="center">
-              <Search />
               <Badge color="error" variant="dot" invisible={true}>
                 <IconButton
                   size="small"

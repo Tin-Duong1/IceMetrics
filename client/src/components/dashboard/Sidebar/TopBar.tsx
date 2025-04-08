@@ -67,7 +67,12 @@ function TopBar({
           <MenuIcon />
         </IconButton>
       </Box>
-      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+      <Drawer
+        anchor="right"
+        open={open}
+        sx={{ zIndex: 1400 }}
+        onClose={toggleDrawer(false)}
+      >
         <SideBarLogo />
         <MenuContent
           setActivePage={(page) => {

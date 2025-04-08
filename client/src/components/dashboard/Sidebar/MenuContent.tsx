@@ -22,18 +22,16 @@ const mainItems = [
   { name: "Uploads", icon: <UploadRounded /> },
 ];
 
-const secondaryItems = [
-  { name: "Settings", icon: <SettingsRounded /> },
-  { name: "About", icon: <InfoRounded /> },
-  { name: "Feedback", icon: <FeedRounded /> },
-];
+const secondaryItems = [{ name: "Settings", icon: <SettingsRounded /> }];
 
 function MenuContent({
   setActivePage,
   activePage,
+  closeDrawer, // Optional prop to close the drawer
 }: {
   setActivePage: (page: string) => void;
   activePage: string;
+  closeDrawer?: () => void;
 }) {
   return (
     <Stack
@@ -53,7 +51,10 @@ function MenuContent({
             }}
           >
             <ListItemButton
-              onClick={() => setActivePage(item.name)}
+              onClick={() => {
+                setActivePage(item.name);
+                closeDrawer?.(); // Close the drawer if the function is provided
+              }}
               sx={{
                 color: activePage === item.name ? "black" : "grey",
                 backgroundColor:
@@ -81,7 +82,10 @@ function MenuContent({
             }}
           >
             <ListItemButton
-              onClick={() => setActivePage(item.name)}
+              onClick={() => {
+                setActivePage(item.name);
+                closeDrawer?.(); // Close the drawer if the function is provided
+              }}
               sx={{
                 color: activePage === item.name ? "black" : "grey",
                 backgroundColor:

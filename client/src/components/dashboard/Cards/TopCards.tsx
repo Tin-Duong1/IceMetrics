@@ -33,23 +33,16 @@ function TopCards() {
                 your website's performance.
               </Typography>
             </Box>
-            <Button variant="contained" sx={{ width: 120 }}>
+            <Button variant="contained" sx={{ width: 120, mt: 2 }}>
               Learn More
             </Button>
           </Stack>
-          <Box
-            component="img"
-            sx={{}}
-            height={250}
-            borderRadius={4}
-            alt="Placeholder"
-            src="https://placehold.co/600x400"
-          />
         </Stack>
       </Card>
       <Card
         variant="outlined"
         sx={{
+          display: { xs: "none", lg: "flex" },
           flexGrow: 2,
           padding: 2,
           borderRadius: 4,
