@@ -13,8 +13,8 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { UploadRounded, FileUpload } from "@mui/icons-material"; // Import FileUpload icon
-import { useDropzone } from "react-dropzone"; // Import react-dropzone
+import { UploadRounded, FileUpload } from "@mui/icons-material";
+import { useDropzone } from "react-dropzone";
 import axios from "axios";
 
 function Uploads() {
@@ -30,12 +30,12 @@ function Uploads() {
   const [videoName, setVideoName] = useState<string>("");
 
   const onDrop = (acceptedFiles: File[]) => {
-    setVideo(acceptedFiles[0] || null); // Set the first dropped file
+    setVideo(acceptedFiles[0] || null);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "video/*": [] }, // Accept only video files
+    accept: { "video/*": [] }, 
     multiple: false,
   });
 
@@ -52,7 +52,7 @@ function Uploads() {
 
     const formData = new FormData();
     formData.append("video", video);
-    formData.append("name", videoName); // Include video name in the upload
+    formData.append("name", videoName);
 
     try {
       const token = localStorage.getItem("jwt_token"); // Retrieve token from localStorage
@@ -64,7 +64,7 @@ function Uploads() {
       });
       alert(`Video "${videoName}" uploaded successfully!`);
       setVideoName(""); // Reset video name input
-      fetchVideos(); // Refresh the video list after upload
+      fetchVideos(); 
     } catch (error) {
       console.error("Error uploading video:", error);
       alert("Failed to upload video. Please try again.");
@@ -98,7 +98,7 @@ function Uploads() {
         },
       });
       alert("Video deleted successfully!");
-      fetchVideos(); // Refresh the video list after deletion
+      fetchVideos();
     } catch (error) {
       console.error("Error deleting video:", error);
       alert("Failed to delete video. Please try again.");
