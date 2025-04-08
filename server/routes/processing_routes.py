@@ -60,17 +60,16 @@ async def analyze_video(
             ret, frame = cap.read()
             if not ret:
                 break
-                
-            # Process every frame to calculate accurate per-second data
+
+            # Process every frame
             analytics.process_frame(frame)
-            
             frame_count += 1
-            
-        # Ensure the average_players_per_second has one data point per second
-        total_seconds = int(frame_count / frames_per_second)
-        if len(analytics.average_players_per_second) < total_seconds:
+
+        # Ensure the average_players_per_second has one data point per 50 frames
+        total_points = frame_count // 50
+        if len(analytics.average_players_per_second) < total_points:
             analytics.average_players_per_second.extend(
-                [0] * (total_seconds - len(analytics.average_players_per_second))
+                [0] * (total_points - len(analytics.average_players_per_second))
             )
             
         left_time = analytics.stats['left_side']['time']

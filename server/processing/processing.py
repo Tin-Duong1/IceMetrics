@@ -253,16 +253,13 @@ class HockeyAnalytics:
         self.total_player_count += len(player_boxes)
         self.frame_count_in_second += 1
         
-        # Calculate average players per second
-        if self.last_second_time is None:
-            self.last_second_time = current_time
-        elif current_time - self.last_second_time >= 1.0:
-            average = self.total_player_count / self.frame_count_in_second
+        # Calculate average players every 50 frames
+        if self.frame_count_in_second == 50:
+            average = self.total_player_count / 50
             self.average_players_per_second.append(average)
-            print(f"Average players per second: {average:.2f}")  # Debug output
+            print(f"Average players per 50 frames: {average:.2f}")  # Debug output
             self.total_player_count = 0
             self.frame_count_in_second = 0
-            self.last_second_time = current_time
         
         # Draw visualization
         result_frame = self.draw_visualization(frame, players_by_side)

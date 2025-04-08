@@ -19,9 +19,7 @@ import { Link, useLocation } from "react-router";
 
 const pages = [
   { name: "Home", route: "/" },
-  { name: "Features", route: "/features" },
   { name: "About Us", route: "/about" },
-  { name: "Contact", route: "/contact" },
 ];
 
 function NavBar() {
@@ -46,7 +44,7 @@ function NavBar() {
         sx={{
           justifyContent: "space-between",
           backdropFilter: "blur(24px)",
-          bgcolor: "transparent",
+          bgcolor: "white",
           borderRadius: 4,
           mx: 2,
           paddingInlineEnd: "16px !important",

@@ -10,8 +10,15 @@ const ProtectedRoutes = () => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       const currentTime = Date.now() / 1000; // Current time in seconds
-      return decodedToken.exp < currentTime; // Check if the token is expired
+      if (decodedToken.exp < currentTime) {
+        localStorage.removeItem("jwt_token"); // Remove the token if expired
+        localStorage.removeItem("activePage"); // Remove activePage if token is expired
+        return true;
+      }
+      return false;
     } catch (error) {
+      localStorage.removeItem("jwt_token");
+      localStorage.removeItem("activePage");
       return true;
     }
   };
