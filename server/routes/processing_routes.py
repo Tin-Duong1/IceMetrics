@@ -174,6 +174,7 @@ async def get_video_analysis(
         "video_id": video.video_id,
         "name": video.name,
         "duration": video.duration,
+        "summary": video.summary,
         "stats": {
             "left_side": {
                 "time": video.left_side_time,
@@ -183,6 +184,6 @@ async def get_video_analysis(
                 "time": video.right_side_time,
                 "percentage": video.right_side_percentage
             },
-            "average_players_per_second": video.average_players_per_second  # Include in response
+            "average_players_per_second": video.average_players_per_second
         }
     }

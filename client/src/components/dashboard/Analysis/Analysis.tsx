@@ -13,6 +13,7 @@ import {
   ListItem,
   ListItemText,
   Button,
+  SelectChangeEvent,
 } from "@mui/material";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
@@ -50,7 +51,7 @@ function Analysis() {
   }, []);
 
   const handleVideoChange = async (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
+    event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
   ) => {
     const videoId = event.target.value as string;
     setSelectedVideo(videoId);
@@ -67,7 +68,7 @@ function Analysis() {
       setAnalysis(response.data);
     } catch (error) {
       console.error("Error fetching analysis:", error);
-      setAnalysis(null); // Set to null instead of a string for consistency
+      setAnalysis(null);
     }
   };
 
@@ -261,6 +262,19 @@ function Analysis() {
                 </Box>
               </Card>
             </Box>
+            {analysis.summary && (
+              <Box sx={{ mt: 4 }}>
+                <Card sx={{ padding: 3, borderRadius: 4, boxShadow: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Analysis Summary
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <Typography variant="body1">
+                    {analysis.summary}
+                  </Typography>
+                </Card>
+              </Box>
+            )}
           </Box>
         ) : (
           <Typography>Select a video to view its analysis.</Typography>
