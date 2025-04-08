@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.8",
     "@mui/x-charts": "^7.28.0",
     "@mui/x-data-grid": "^7.28.0",
+    "@types/react-dropzone": "^4.2.2",
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
     "dotenv": "^16.4.7",
