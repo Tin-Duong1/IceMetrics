@@ -3,38 +3,16 @@ import MenuContent from "./MenuContent";
 import SideBarLogo from "./SideBarLogo";
 import { grey } from "@mui/material/colors";
 import SideBarAccount from "./SideBarAccount";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 function SideBar({
   setActivePage,
   activePage,
+  userData,
 }: {
   setActivePage: (page: string) => void;
   activePage: string;
+  userData: { name: string; email: string; phoneNumber: string } | null;
 }) {
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-  });
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("jwt_token");
-        const response = await axios.get("/api/me/settings", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
   return (
     <Box
       sx={{
@@ -48,11 +26,12 @@ function SideBar({
     >
       <SideBarLogo />
       <MenuContent setActivePage={setActivePage} activePage={activePage} />
-      <SideBarAccount
-        name={userData.name}
-        email={userData.email}
-        phoneNumber={userData.phoneNumber}
-      />
+      {userData && (
+        <SideBarAccount
+          userData={userData} // Pass userData to SideBarAccount
+          setActivePage={setActivePage}
+        />
+      )}
     </Box>
   );
 }

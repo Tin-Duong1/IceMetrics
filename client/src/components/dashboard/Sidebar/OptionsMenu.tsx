@@ -3,7 +3,11 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 
-function OptionsMenu() {
+function OptionsMenu({
+  setActivePage,
+}: {
+  setActivePage: (page: string) => void;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -39,8 +43,14 @@ function OptionsMenu() {
         transformOrigin={{ horizontal: 40, vertical: 130 }}
         anchorOrigin={{ horizontal: "right", vertical: "top" }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>Settings</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            setActivePage("Settings"); // Change the active page to "settings"
+          }}
+        >
+          Settings
+        </MenuItem>
         <MenuItem
           onClick={() => {
             handleClose();
@@ -48,7 +58,7 @@ function OptionsMenu() {
             window.location.href = "/"; // Redirect to sign-in page
           }}
         >
-          Logout
+          Log out
         </MenuItem>
       </Menu>
     </React.Fragment>

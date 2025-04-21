@@ -14,6 +14,7 @@ import {
   ListItemText,
   Button,
   SelectChangeEvent,
+  Icon,
 } from "@mui/material";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
@@ -24,8 +25,9 @@ import {
   BarElement,
   Tooltip,
 } from "chart.js";
-import StatCard2 from "../Cards/StatCard2";
 import { LineChart, PieChart } from "@mui/x-charts";
+import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
+import { grey } from "@mui/material/colors";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -89,7 +91,11 @@ function Analysis() {
             alignItems: "center",
           }}
         >
-          <FormControl sx={{ m: 1, minWidth: 200 }} size="medium">
+          <FormControl
+            sx={{ m: 1, minWidth: 200 }}
+            variant="standard"
+            size="medium"
+          >
             <InputLabel id="demo-select-small-label">Video</InputLabel>
             <Select
               labelId="demo-select-small-label"
@@ -269,15 +275,28 @@ function Analysis() {
                     Analysis Summary
                   </Typography>
                   <Divider sx={{ mb: 2 }} />
-                  <Typography variant="body1">
-                    {analysis.summary}
-                  </Typography>
+                  <Typography variant="body1">{analysis.summary}</Typography>
                 </Card>
               </Box>
             )}
           </Box>
         ) : (
-          <Typography>Select a video to view its analysis.</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: 20,
+            }}
+          >
+            <ImageNotSupportedIcon sx={{ fontSize: 200, color: grey[300] }} />
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "center", mt: 4, color: grey[500] }}
+            >
+              Select a video from the dropdown
+            </Typography>
+          </Box>
         )}
       </Box>
     </Box>

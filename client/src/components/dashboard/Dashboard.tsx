@@ -22,15 +22,34 @@ import Uploads from "./Uploads";
 import Feedback from "./Feedback/Feedback";
 import Analysis from "./Analysis/Analysis";
 import TopBar from "./Sidebar/TopBar";
+import axios from "axios";
 
 function Dashboard() {
   const [activePage, setActivePage] = useState(() => {
     return localStorage.getItem("activePage") || "Home";
   });
 
+  const [userData, setUserData] = useState(null);
+
   useEffect(() => {
     localStorage.setItem("activePage", activePage);
   }, [activePage]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("jwt_token");
+        const response = await axios.get("/api/me/settings", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const renderPage = () => {
     switch (activePage) {
@@ -53,18 +72,26 @@ function Dashboard() {
   return (
     <Box>
       <Box sx={{ display: { xs: "block", lg: "none", zIndex: 1000 } }}>
-        <TopBar setActivePage={setActivePage} activePage={activePage} />
+        <TopBar
+          setActivePage={setActivePage}
+          activePage={activePage}
+          userData={userData}
+        />
       </Box>
       <Box sx={{ display: "flex", height: "100vh", zIndex: 0 }}>
         <Box sx={{ display: { xs: "none", lg: "block" } }}>
-          <SideBar setActivePage={setActivePage} activePage={activePage} />
+          <SideBar
+            setActivePage={setActivePage}
+            activePage={activePage}
+            userData={userData}
+          />
         </Box>
         <Box sx={{ flexGrow: 1, overflow: "scroll" }}>
           <Stack
             direction={"row"}
             sx={{
               paddingInline: 4,
-              paddingTop: { xs: 15, lg: 4 },
+              paddingTop: { xs: 12, lg: 4 },
               paddingBottom: 2,
               alignItems: "center",
               justifyContent: "space-between",
@@ -76,23 +103,6 @@ function Dashboard() {
                 {activePage}
               </Typography>
             </Breadcrumbs>
-            <Stack direction={"row"} spacing={2} alignItems="center">
-              <Badge color="error" variant="dot" invisible={true}>
-                <IconButton
-                  size="small"
-                  aria-label="settings"
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "grey.400",
-                    borderRadius: 2,
-                    width: 42,
-                    height: 42,
-                  }}
-                >
-                  <Notifications fontSize="small" />
-                </IconButton>
-              </Badge>
-            </Stack>
           </Stack>
           <Box>{renderPage()}</Box>
         </Box>

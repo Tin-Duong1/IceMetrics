@@ -17,9 +17,9 @@ function TopCards() {
             direction={"column"}
             flexGrow={2}
             maxWidth={600}
-            sx={{ justifyContent: "space-between" }}
+            sx={{ justifyContent: "space-between", padding: 2 }}
           >
-            <Box sx={{ paddingTop: 4 }}>
+            <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
               <Typography
                 variant="h4"
                 fontWeight={"bold"}
@@ -29,8 +29,10 @@ function TopCards() {
                 Welcome to IceMetrics a Hockey Analytics Tool
               </Typography>
               <Typography variant="subtitle1">
-                IceMetrics is a powerful analytics tool that helps you track
-                your website's performance.
+                IceMetrics is a hockey analytics tool that helps you analyze and
+                visualize your hockey data. It provides a user-friendly
+                interface for uploading, processing, and analyzing hockey
+                videos.
               </Typography>
             </Box>
             <Button variant="contained" sx={{ width: 120, mt: 2 }}>

@@ -35,7 +35,7 @@ function Uploads() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "video/*": [] }, 
+    accept: { "video/*": [] },
     multiple: false,
   });
 
@@ -64,7 +64,7 @@ function Uploads() {
       });
       alert(`Video "${videoName}" uploaded successfully!`);
       setVideoName(""); // Reset video name input
-      fetchVideos(); 
+      fetchVideos();
     } catch (error) {
       console.error("Error uploading video:", error);
       alert("Failed to upload video. Please try again.");
@@ -117,6 +117,7 @@ function Uploads() {
         padding: 2,
         flexWrap: "wrap",
       }}
+      gap={4}
     >
       <Stack flexGrow={1}>
         <Box marginBottom={2}>

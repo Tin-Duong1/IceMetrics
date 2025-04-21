@@ -8,10 +8,12 @@ import { Avatar, Box, IconButton, Stack, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import OptionsMenu from "./OptionsMenu";
 
-function SideBarAccount(userData: {
-  name: string;
-  email: string;
-  phoneNumber: string;
+function SideBarAccount({
+  userData,
+  setActivePage,
+}: {
+  userData: { name: string; email: string; phoneNumber: string };
+  setActivePage: (page: string) => void;
 }) {
   return (
     <Stack
@@ -37,7 +39,7 @@ function SideBarAccount(userData: {
           {userData.email}
         </Typography>
       </Stack>
-      <OptionsMenu />
+      <OptionsMenu setActivePage={setActivePage} />
     </Stack>
   );
 }

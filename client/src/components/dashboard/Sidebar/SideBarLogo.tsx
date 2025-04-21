@@ -8,17 +8,18 @@ function SideBarLogo() {
       sx={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "flex-start",
+        marginInlineStart: 2,
         height: 100,
         borderBottom: "1px solid",
         borderColor: grey[300],
       }}
     >
-      <Card
+      <Box
         sx={{
           height: 64,
           width: 190,
           borderRadius: 2,
-          marginInline: "auto",
           display: "flex",
           alignItems: "center",
           padding: 2,
@@ -26,7 +27,7 @@ function SideBarLogo() {
         }}
       >
         <img src={Logo} height={36} alt="logo" />
-      </Card>
+      </Box>
     </Box>
   );
 }

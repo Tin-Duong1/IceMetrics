@@ -1,9 +1,8 @@
-import { Box, Button, Drawer, IconButton } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, Button, Divider, Drawer, IconButton } from "@mui/material";
+import React, { useState } from "react";
 import SideBarLogo from "./SideBarLogo";
 import MenuContent from "./MenuContent";
 import SideBarAccount from "./SideBarAccount";
-import axios from "axios";
 import { grey } from "@mui/material/colors";
 import MenuIcon from "@mui/icons-material/Menu";
 import Logo from "/LogoBlack.svg";
@@ -12,37 +11,17 @@ import Title from "/title.png";
 function TopBar({
   setActivePage,
   activePage,
+  userData,
 }: {
   setActivePage: (page: string) => void;
   activePage: string;
+  userData: { name: string; email: string; phoneNumber: string } | null;
 }) {
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (changeOpen: boolean) => () => {
     setOpen(changeOpen);
   };
-
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-  });
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("jwt_token");
-        const response = await axios.get("/api/me/settings", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   return (
     <Box>
@@ -51,17 +30,18 @@ function TopBar({
           position: "fixed",
           backgroundColor: grey[100],
           width: "100%",
-          height: 100,
+          height: 70,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          borderBottom: "1px solid",
+          borderColor: grey[300],
           padding: 2,
           zIndex: 1300, // Ensure it is above other elements
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <img src={Logo} height={36} alt="logo" />
-          <img src={Title} height={36} alt="logo" />
         </Box>
         <IconButton onClick={toggleDrawer(true)}>
           <MenuIcon />
@@ -81,11 +61,12 @@ function TopBar({
           }}
           activePage={activePage}
         />
-        <SideBarAccount
-          name={userData.name}
-          email={userData.email}
-          phoneNumber={userData.phoneNumber}
-        />
+        {userData && (
+          <SideBarAccount
+            userData={userData} // Pass userData to SideBarAccount
+            setActivePage={setActivePage}
+          />
+        )}
       </Drawer>
     </Box>
   );
