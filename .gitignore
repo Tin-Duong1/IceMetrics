@@ -172,5 +172,3 @@ cython_debug/
 
 # Keys to ignore
 Google_Key.json
-
-*.pt
