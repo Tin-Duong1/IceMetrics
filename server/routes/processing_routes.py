@@ -9,8 +9,8 @@ from utilities.security import get_current_user
 from database.database_setup import *
 from utilities.utilities import add_video_to_user, get_user_by_email, get_videos_by_user
 from processing.processing import HockeyAnalytics
-from processing.processing_v2 import HockeyAnalyticsV2  # Import the new analytics class
-from processing.open_ai_summary import summarize_stats
+from processing.processing_v2 import process_video  # Import the process_video function
+from processing.open_ai_summary import summarize_stats  # Import the summarize_stats function
 from dotenv import load_dotenv
 from database.models import Video
 
@@ -40,142 +40,48 @@ async def analyze_video(
             content = await video.read()
             temp_file.write(content)
         
-        cap = cv2.VideoCapture(temp_path)
-        if not cap.isOpened():
-            raise HTTPException(status_code=400, detail="Could not open the video file")
-        
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        duration = int(frame_count / fps) if fps > 0 else 0
-        
-        # Use the improved HockeyAnalyticsV2 by default
-        analytics = HockeyAnalyticsV2() if use_v2 else HockeyAnalytics()
-        
-        ret, first_frame = cap.read()
-        if not ret:
-            raise HTTPException(status_code=400, detail="Failed to read video frame")
-        
-        analytics.define_zones(first_frame.shape)
-        
-        frame_count = 0
-        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-        
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        frames_per_second = int(fps) if fps > 0 else 1
-        
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
+        # Use the process_video function for analysis
+        zone_time, average_players_per_interval = process_video(temp_path)
 
-            # Process every frame
-            analytics.process_frame(frame)
-            frame_count += 1
+        # Calculate total time and percentages
+        total_time = sum(zone_time.values())
+        left_percentage = round((zone_time["left"] / total_time) * 100, 1) if total_time > 0 else 0
+        middle_percentage = round((zone_time["middle"] / total_time) * 100, 1) if total_time > 0 else 0
+        right_percentage = round((zone_time["right"] / total_time) * 100, 1) if total_time > 0 else 0
 
-        # Ensure the average_players_per_second has one data point per 50 frames
-        total_points = frame_count // 50
-        if len(analytics.average_players_per_second) < total_points:
-            analytics.average_players_per_second.extend(
-                [0] * (total_points - len(analytics.average_players_per_second))
-            )
-        
-        # Process stats based on analytics class used
-        if use_v2:
-            # Get formatted stats for V2 (includes middle zone)
-            formatted_stats = analytics.get_stats()
-            left_time = formatted_stats['left_side']['time']
-            middle_time = formatted_stats['middle_zone']['time']
-            right_time = formatted_stats['right_side']['time']
-            
-            left_percentage = formatted_stats['left_side']['percentage']
-            middle_percentage = formatted_stats['middle_zone']['percentage']
-            right_percentage = formatted_stats['right_side']['percentage']
-            
-            # Make sure percentages are rounded
-            left_percentage = round(left_percentage, 1)
-            middle_percentage = round(middle_percentage, 1)
-            right_percentage = round(right_percentage, 1)
-            
-            stats = {
-                "left_side_time": left_time,
-                "middle_zone_time": middle_time,
-                "right_side_time": right_time,
-                "left_side_percentage": left_percentage,
-                "middle_zone_percentage": middle_percentage,
-                "right_side_percentage": right_percentage,
-                "average_players_per_second": analytics.get_average_players_per_second()
-            }
-            
-            response_stats = {
-                "left_side": {
-                    "time": int(left_time),
-                    "percentage": left_percentage
-                },
-                "middle_zone": {
-                    "time": int(middle_time),
-                    "percentage": middle_percentage
-                },
-                "right_side": {
-                    "time": int(right_time),
-                    "percentage": right_percentage
-                },
-                "average_players_per_second": analytics.get_average_players_per_second()
-            }
-        else:
-            # Original two-zone processing
-            left_time = analytics.stats['left_side']['time']
-            right_time = analytics.stats['right_side']['time']
-            total_time = left_time + right_time
-            
-            left_percentage = round((left_time / total_time) * 100, 1) if total_time > 0 else 0
-            right_percentage = round((right_time / total_time) * 100, 1) if total_time > 0 else 0
-            
-            stats = {
-                "left_side_time": left_time,
-                "right_side_time": right_time,
-                "left_side_percentage": left_percentage,
-                "right_side_percentage": right_percentage,
-                "average_players_per_second": analytics.get_average_players_per_second()
-            }
-            
-            response_stats = {
-                "left_side": {
-                    "time": int(left_time),
-                    "percentage": left_percentage
-                },
-                "right_side": {
-                    "time": int(right_time),
-                    "percentage": right_percentage
-                },
-                "average_players_per_second": analytics.get_average_players_per_second()
-            }
-        
+        stats = {
+            "left_side_time": zone_time["left"],
+            "middle_zone_time": zone_time["middle"],
+            "right_side_time": zone_time["right"],
+            "left_side_percentage": left_percentage,
+            "middle_zone_percentage": middle_percentage,
+            "right_side_percentage": right_percentage,
+            "average_players_per_second": average_players_per_interval  # Add average players data
+        }
+
         # Generate AI summary
         summary = summarize_stats(stats)
-        
+
         # Save video info to the database
         with Session(engine) as session:
             user = get_user_by_email(session, current_user)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             
-            # Add summary to video data
             video_data = {
                 "name": name,
-                "duration": duration,
+                "duration": int(total_time),
                 "summary": summary,
-                "average_players_per_second": analytics.get_average_players_per_second(),
-                **stats  # Unpack all stats into the video_data
+                **stats
             }
             
             new_video = add_video_to_user(session, current_user, video_data)
         
         return {
             "video_id": new_video.video_id,
-            "duration": duration,
             "name": name,
             "summary": summary,
-            "stats": response_stats
+            "stats": stats
         }
     
     except Exception as e:

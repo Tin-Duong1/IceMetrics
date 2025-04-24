@@ -1,323 +1,138 @@
-import cv2
-import numpy as np
-import os
-import time
-from ultralytics import YOLO
+def process_video(video_path):
+    import cv2
+    import numpy as np
+    from ultralytics import YOLO
+    import time
 
-class HockeyAnalyticsV2:
-    def __init__(self):
-        """Initialize analytics with three zones (left, middle, right)"""
-        self.stats = {
-            'left_side': {
-                'time': 0,
-                'count': 0
-            },
-            'middle_zone': {
-                'time': 0,
-                'count': 0
-            },
-            'right_side': {
-                'time': 0,
-                'count': 0
-            }
-        }
-        
-        self.current_side_with_more = 'neutral'
-        self.zone_width = None
-        self.last_frame_time = None
-        
-        self.total_player_count = 0
-        self.frame_count_in_second = 0
-        self.average_players_per_second = []
-        
-        # Load YOLO models
-        try:
-            # Try to load rink model first
-            self.rink_model = YOLO("models/updatedRink_model.pt")
-            self.player_model = YOLO("models/player_model.pt")
-            self.using_advanced_models = True
-            print("Advanced YOLO models loaded successfully")
-        except Exception as e:
-            print(f"Error loading advanced YOLO models: {e}")
-            print("Falling back to basic person detection")
-            try:
-                self.yolo_model = YOLO("yolov8n.pt")
-                self.using_yolo = True
-                self.using_advanced_models = False
-                print("Basic YOLO model loaded successfully")
-            except Exception as e2:
-                print(f"Error loading basic YOLO model: {e2}")
-                print("Falling back to contour-based detection")
-                self.using_yolo = False
-                self.using_advanced_models = False
+    # Load the YOLOv8 segmentation model for rink and player detection
+    rink_model = YOLO("models/updatedRink_model.pt")  # Rink segmentation model
+    player_model = YOLO("models/player_model.pt")  # Player detection model
 
-    def define_zones(self, frame_shape):
-        """Define three zones for player position assessment"""
-        height, width = frame_shape[:2]
-        self.zone_width = width // 3
-        
-        # Zone boundaries
-        self.zone_boundaries = {
-            'left': (0, self.zone_width),
-            'middle': (self.zone_width, 2 * self.zone_width),
-            'right': (2 * self.zone_width, width)
-        }
+    # Load video file or webcam (use 0 for webcam)
+    cap = cv2.VideoCapture(video_path)
 
-    def detect_players_advanced(self, frame):
-        """Detect players using the specialized hockey player model"""
-        player_boxes = []
-        
-        results = self.player_model(frame)
-        
-        if results[0].boxes is not None:
-            boxes = results[0].boxes.xyxy.cpu().numpy()
-            
-            for box in boxes:
-                x1, y1, x2, y2 = map(int, box)
-                
-                center_x = (x1 + x2) // 2
-                center_y = (y1 + y2) // 2
-                
-                area = (x2 - x1) * (y2 - y1)
-                
-                player_boxes.append({
-                    'box': (x1, y1, x2, y2),
-                    'center': (center_x, center_y),
-                    'area': area
-                })
-                
-        return player_boxes
+    # Calculate video duration
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    video_duration = total_frames / fps if fps > 0 else 0
 
-    def detect_players(self, frame):
-        """Detect players using the appropriate method based on available models"""
-        if self.using_advanced_models:
-            return self.detect_players_advanced(frame)
-        elif self.using_yolo:
-            return self.detect_players_yolo(frame)
-        else:
-            return self.detect_players_contour(frame)
-    
-    def detect_players_yolo(self, frame):
-        """Detect players using basic YOLO model (person class)"""
-        results = self.yolo_model(frame, classes=[0]) 
-        
-        player_boxes = []
-        if results:
-            boxes = results[0].boxes
-            
-            for box in boxes:
-                x1, y1, x2, y2 = box.xyxy[0].tolist()
-                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                
-                confidence = box.conf[0].item() if hasattr(box, 'conf') else 0.0
-                
-                center_x = (x1 + x2) // 2
-                center_y = (y1 + y2) // 2
-                
-                area = (x2 - x1) * (y2 - y1)
-                
-                player_boxes.append({
-                    'box': (x1, y1, x2, y2),
-                    'center': (center_x, center_y),
-                    'area': area,
-                    'confidence': confidence
-                })
-        
-        return player_boxes
-    
-    def detect_players_contour(self, frame):
-        """Detect players using contour detection (fallback method)"""
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blur_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
-        thresh = cv2.adaptiveThreshold(blur_frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                      cv2.THRESH_BINARY_INV, 11, 2)
-        
-        kernel = np.ones((3, 3), np.uint8)
-        thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
-        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
-        
-        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        min_contour_area = 200
-        max_contour_area = 15000
-        
-        player_boxes = []
-        for contour in contours:
-            area = cv2.contourArea(contour)
-            if min_contour_area < area < max_contour_area:
-                x, y, w, h = cv2.boundingRect(contour)
-                
-                aspect_ratio = float(h) / w
-                if 1.2 < aspect_ratio < 4.0:
-                    padding_x = int(w * 0.15)
-                    padding_y = int(h * 0.15)
-                    x = max(0, x - padding_x)
-                    y = max(0, y - padding_y)
-                    w = min(frame.shape[1] - x, w + 2 * padding_x)
-                    h = min(frame.shape[0] - y, h + 2 * padding_y)
-                    
-                    center_x = x + w // 2
-                    center_y = y + h // 2
-                    
-                    player_boxes.append({
-                        'box': (x, y, x + w, y + h),
-                        'center': (center_x, center_y),
-                        'area': area
-                    })
-        
-        return player_boxes
-    
-    def count_players_by_zone(self, player_boxes):
-        """Count players in each of the three zones"""
-        zone_counts = {'left_side': 0, 'middle_zone': 0, 'right_side': 0}
-        zone_players = {'left_side': [], 'middle_zone': [], 'right_side': []}
-        
-        for player in player_boxes:
-            center_x = player['center'][0]
-            
-            if center_x < self.zone_boundaries['left'][1]:
-                # Left zone
-                zone_counts['left_side'] += 1
-                zone_players['left_side'].append(player)
-            elif center_x < self.zone_boundaries['middle'][1]:
-                # Middle zone
-                zone_counts['middle_zone'] += 1
-                zone_players['middle_zone'].append(player)
-            else:
-                # Right zone
-                zone_counts['right_side'] += 1
-                zone_players['right_side'].append(player)
-        
-        # Update counts in stats
-        for zone in zone_counts:
-            self.stats[zone]['count'] = zone_counts[zone]
-        
-        # Determine which zone has more players
-        max_zone = max(zone_counts, key=zone_counts.get)
-        max_count = zone_counts[max_zone]
-        
-        # Check if there's a tie
-        if list(zone_counts.values()).count(max_count) > 1:
-            self.current_side_with_more = 'neutral'
-        else:
-            self.current_side_with_more = max_zone
-        
-        return zone_players
-    
-    def update_statistics(self, time_delta):
-        """Update time statistics for the zone with more players"""
-        if self.current_side_with_more != 'neutral':
-            self.stats[self.current_side_with_more]['time'] += time_delta
-    
-    def draw_visualization(self, frame, players_by_zone):
-        """Draw visualization elements on frame"""
-        result = frame.copy()
-        
-        # Draw zone dividers
-        cv2.line(result, (self.zone_boundaries['left'][1], 0), 
-                (self.zone_boundaries['left'][1], frame.shape[0]), 
-                (255, 255, 255), 2)
-        
-        cv2.line(result, (self.zone_boundaries['middle'][1], 0), 
-                (self.zone_boundaries['middle'][1], frame.shape[0]), 
-                (255, 255, 255), 2)
-        
-        # Draw player boxes with zone-specific colors
-        zone_colors = {
-            'left_side': (255, 0, 0),  # Red
-            'middle_zone': (0, 255, 0),  # Green
-            'right_side': (0, 0, 255)   # Blue
-        }
-        
-        for zone, players in players_by_zone.items():
-            color = zone_colors[zone]
-            for player in players:
-                x1, y1, x2, y2 = player['box']
-                cv2.rectangle(result, (x1, y1), (x2, y2), color, 2)
-                
-                if 'confidence' in player:
-                    conf_text = f"{player['confidence']:.2f}"
-                    cv2.putText(result, conf_text, (x1, y1 - 5),
-                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
-        
-        # Display zone labels and statistics
-        zone_labels = {
-            'left_side': "Left Zone",
-            'middle_zone': "Middle Zone",
-            'right_side': "Right Zone"
-        }
-        
-        y_pos = 30
-        for zone, label in zone_labels.items():
-            color = zone_colors[zone]
-            highlight = (255, 255, 0) if self.current_side_with_more == zone else (255, 255, 255)
-            
-            count = self.stats[zone]['count']
-            time_value = self.stats[zone]['time']
-            time_str = f"{int(time_value/60):02d}:{int(time_value%60):02d}"
-            
-            # Calculate total time
-            total_time = sum(self.stats[z]['time'] for z in self.stats)
-            pct = (time_value / total_time * 100) if total_time > 0 else 0
-            
-            cv2.putText(result, f"{label}: {count} players", 
-                      (10, y_pos), cv2.FONT_HERSHEY_SIMPLEX, 0.6, highlight, 2)
-            cv2.putText(result, f"Time: {time_str} ({pct:.1f}%)", 
-                      (10, y_pos + 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
-            
-            y_pos += 60
-        
-        method_text = "Advanced Hockey Analytics" if self.using_advanced_models else "Basic Player Detection"
-        cv2.putText(result, method_text, (frame.shape[1] // 2 - 100, frame.shape[0] - 20),
-                  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-        
-        return result
-    
-    def process_frame(self, frame):
-        """Process a single frame and update all analytics"""
-        current_time = time.time()
-        if self.last_frame_time is None:
-            time_delta = 0
-        else:
-            time_delta = current_time - self.last_frame_time
-        self.last_frame_time = current_time
-        
-        # Detect players
-        player_boxes = self.detect_players(frame)
-        
-        # Count players and update statistics
-        players_by_zone = self.count_players_by_zone(player_boxes)
-        self.update_statistics(time_delta)
-        
-        # Update player count tracking
-        self.total_player_count += len(player_boxes)
-        self.frame_count_in_second += 1
-        
-        # Calculate average players every 50 frames
-        if self.frame_count_in_second == 50:
-            average = self.total_player_count / 50
-            self.average_players_per_second.append(average)
-            self.total_player_count = 0
-            self.frame_count_in_second = 0
-        
-        # Draw visualization
-        result_frame = self.draw_visualization(frame, players_by_zone)
-        
-        return result_frame
+    # Initialize zone time counters
+    zone_time = {"left": 0, "middle": 0, "right": 0}
+    last_update_time = time.time()
 
-    def get_average_players_per_second(self):
-        """Return the list of average players per second for database storage"""
-        return self.average_players_per_second
+    # Initialize variables for average players calculation
+    player_counts = []
+    frame_count = 0
+    average_players_per_interval = []
 
-    def get_stats(self):
-        """Get formatted statistics for external use"""
-        total_time = sum(self.stats[zone]['time'] for zone in self.stats)
-        
-        formatted_stats = {}
-        for zone, data in self.stats.items():
-            formatted_stats[zone] = {
-                'time': data['time'],
-                'percentage': (data['time'] / total_time * 100) if total_time > 0 else 0
-            }
-            
-        return formatted_stats
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Run YOLOv8 segmentation inference for rink
+        rink_results = rink_model(frame)
+        player_results = player_model(frame.copy())  # Use a copy of the unmodified frame
+
+        # Get rink masks
+        if rink_results[0].masks is not None:
+            rink_masks = rink_results[0].masks.data.cpu().numpy()  # (N, H, W)
+
+            for rink_mask in rink_masks:
+                # Resize the rink mask to match the frame dimensions
+                resized_rink_mask = cv2.resize(rink_mask, (frame.shape[1], frame.shape[0]))
+
+                # Split the rink mask into three vertical zones
+                height, width = resized_rink_mask.shape
+                zone_width = width // 3
+
+                # Create a single-color mask for each zone
+                colored_mask = np.zeros_like(frame, dtype=np.uint8)
+
+                # Left zone (red)
+                colored_mask[:, :zone_width][resized_rink_mask[:, :zone_width] > 0] = (255, 0, 0)
+                # Middle zone (green)
+                colored_mask[:, zone_width:2 * zone_width][resized_rink_mask[:, zone_width:2 * zone_width] > 0] = (0, 255, 0)
+                # Right zone (blue)
+                colored_mask[:, 2 * zone_width:][resized_rink_mask[:, 2 * zone_width:] > 0] = (0, 0, 255)
+
+                # Blend mask with the original frame
+                frame = cv2.addWeighted(frame, 1.0, colored_mask, 0.5, 0)
+
+        # Detect players in the original frame
+        if player_results[0].boxes is not None:
+            player_boxes = player_results[0].boxes.xyxy.cpu().numpy()  # (N, 4)
+
+            # Count players in each zone
+            zone_counts = {"left": 0, "middle": 0, "right": 0}
+            player_count = 0  # Total players in the frame
+
+            for box in player_boxes:
+                x1, y1, x2, y2 = map(int, box)  # Player bounding box coordinates
+
+                # Determine which zone the player is in
+                player_center_x = (x1 + x2) // 2
+                if player_center_x < zone_width:
+                    zone_counts["left"] += 1
+                    color = (255, 0, 0)  # Red for left zone
+                elif player_center_x < 2 * zone_width:
+                    zone_counts["middle"] += 1
+                    color = (0, 255, 0)  # Green for middle zone
+                else:
+                    zone_counts["right"] += 1
+                    color = (0, 0, 255)  # Blue for right zone
+
+                player_count += 1  # Increment total player count
+
+                # Draw the player bounding box
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(frame, "Player", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+            # Add the player count to the list
+            player_counts.append(player_count)
+            frame_count += 1
+
+            # Check if 50 frames have passed
+            if frame_count >= 50:
+                # Calculate the average players for the interval
+                average_players = sum(player_counts) / len(player_counts) if player_counts else 0
+                average_players_per_interval.append(average_players)
+
+                # Reset for the next interval
+                player_counts = []
+                frame_count = 0
+
+            # Update zone time based on the zone with the most players
+            current_time = time.time()
+            elapsed_time = current_time - last_update_time
+            max_zone = max(zone_counts, key=zone_counts.get)
+            zone_time[max_zone] += elapsed_time
+            last_update_time = current_time
+
+            # Display zone time on the frame
+            cv2.putText(frame, f"Left Zone Time: {zone_time['left']:.2f}s", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            cv2.putText(frame, f"Middle Zone Time: {zone_time['middle']:.2f}s", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(frame, f"Right Zone Time: {zone_time['right']:.2f}s", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+
+        # Display the frame
+        cv2.imshow("Ice Surface and Player Detection", frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+    # Print average players per interval for debugging
+    print(f"Average players per 50 frames: {average_players_per_interval}")
+
+    # Return the zone times and average players per interval
+    return zone_time, average_players_per_interval
+
+if __name__ == "__main__":
+    video_path = "test3.mp4"  # Hardcoded video file path for testing
+    zone_time, average_players_per_interval = process_video(video_path)
+    print("Zone Times:")
+    print(f"Left Zone Time: {zone_time['left']:.2f}s")
+    print(f"Middle Zone Time: {zone_time['middle']:.2f}s")
+    print(f"Right Zone Time: {zone_time['right']:.2f}s")
+    print("Average Players Per 50 Frames:", average_players_per_interval)

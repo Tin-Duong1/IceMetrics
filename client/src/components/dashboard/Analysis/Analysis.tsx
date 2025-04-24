@@ -22,7 +22,7 @@ import {
   BarElement,
   Tooltip,
 } from "chart.js";
-import { LineChart, PieChart } from "@mui/x-charts";
+import { LineChart } from "@mui/x-charts";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import { grey } from "@mui/material/colors";
 import SummaryCard from "../Cards/SummaryCard";
@@ -50,9 +50,7 @@ function Analysis() {
     fetchVideos();
   }, []);
 
-  const handleVideoChange = async (
-    event: SelectChangeEvent
-  ) => {
+  const handleVideoChange = async (event: SelectChangeEvent) => {
     const videoId = event.target.value as string;
     setSelectedVideo(videoId);
 
@@ -188,7 +186,7 @@ function Analysis() {
                       <ListItem>
                         <ListItemText
                           primary="Zone Distribution"
-                          secondary={`Left: ${analysis.stats.left_side.percentage}% | Middle: ${analysis.stats.middle_zone.percentage}% | Right: ${analysis.stats.right_side.percentage}%`}
+                          secondary={`Left: ${analysis.stats.left_side.percentage}% | Neutral: ${analysis.stats.middle_zone.percentage}% | Right: ${analysis.stats.right_side.percentage}%`}
                         />
                       </ListItem>
                     </>
@@ -242,7 +240,7 @@ function Analysis() {
               sx={{ display: "flex", gap: 2, marginTop: 2, flexWrap: "wrap" }}
             >
               <Card sx={{ padding: 2, borderRadius: 4, boxShadow: 3 }}>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <Box sx={{ display: "flex" }}>
                   <Box
                     sx={{
                       display: "flex",
@@ -253,87 +251,130 @@ function Analysis() {
                     <Typography sx={{ width: 77 }}>Zone Time</Typography>
                     <Typography variant="caption">Percentage</Typography>
                   </Box>
-                  <PieChart
-                    series={[
-                      {
-                        innerRadius: "60%",
-                        outerRadius: "100%",
-                        paddingAngle: 5,
-                        cornerRadius: 5,
-                        data: hasMiddleZone
-                          ? [
-                              {
-                                value: analysis.stats.left_side.percentage,
-                                label: "Left Side",
-                                color: "#1E88E5", // Blue
-                              },
-                              {
-                                value: analysis.stats.middle_zone.percentage,
-                                label: "Middle Zone",
-                                color: "#43A047", // Green
-                              },
-                              {
-                                value: analysis.stats.right_side.percentage,
-                                label: "Right Side",
-                                color: "#D81B60", // Pink/Red
-                              },
-                            ]
-                          : [
-                              {
-                                value: analysis.stats.left_side.percentage,
-                                label: "Left Side",
-                                color: "#1E88E5", // Blue
-                              },
-                              {
-                                value: analysis.stats.right_side.percentage,
-                                label: "Right Side",
-                                color: "#D81B60", // Pink/Red
-                              },
-                            ],
-                      },
-                    ]}
-                    height={200}
-                    width={400}
-                    slotProps={{
-                      legend: {
-                        direction: "row",
-                        position: { vertical: "bottom", horizontal: "middle" },
-                        padding: 0,
-                      },
+                  <Box
+                    sx={{
+                      display: "flex",
+                      border: "1px solid grey",
+                      borderRadius: 10,
+                      marginLeft: 10,
+                      overflow: "hidden",
                     }}
-                  />
+                  >
+                    <Box
+                      sx={{
+                        width: "100px",
+                        height: "127px",
+                        backgroundColor: `rgba(30, 136, 229, ${
+                          analysis.stats.left_side.percentage / 100
+                        })`, // Blue with dynamic opacity
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="body2" color="black">
+                        Left Zone
+                      </Typography>
+                      <Typography variant="caption" color="black">
+                        {analysis.stats.left_side.percentage}%
+                      </Typography>
+                    </Box>
+                    {hasMiddleZone && (
+                      <Box
+                        sx={{
+                          width: "100px",
+                          height: "127px",
+                          backgroundColor: `rgba(67, 160, 71, ${
+                            analysis.stats.middle_zone.percentage / 100
+                          })`, // Green with dynamic opacity
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography variant="body2" color="black">
+                          Neutral Zone
+                        </Typography>
+                        <Typography variant="caption" color="black">
+                          {analysis.stats.middle_zone.percentage}%
+                        </Typography>
+                      </Box>
+                    )}
+                    <Box
+                      sx={{
+                        width: "100px",
+                        height: "127px",
+                        backgroundColor: `rgba(216, 27, 96, ${
+                          analysis.stats.right_side.percentage / 100
+                        })`, // Pink/Red with dynamic opacity
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="body2" color="black">
+                        Right Zone
+                      </Typography>
+                      <Typography variant="caption" color="black">
+                        {analysis.stats.right_side.percentage}%
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               </Card>
-              
-              <Card sx={{ padding: 2, borderRadius: 4, boxShadow: 3, flexGrow: 1 }}>
+
+              <Card
+                sx={{ padding: 2, borderRadius: 4, boxShadow: 3, flexGrow: 1 }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Zone Time Statistics
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
                 <Stack direction="row" spacing={2} flexWrap="wrap">
                   <Box sx={{ minWidth: 150, mb: 2 }}>
-                    <Typography variant="subtitle2" color="#1E88E5">Left Side</Typography>
-                    <Typography variant="body1">{Math.round(analysis.stats.left_side.time)} seconds</Typography>
-                    <Typography variant="body2">{analysis.stats.left_side.percentage}%</Typography>
+                    <Typography variant="subtitle2" color="#1E88E5">
+                      Left Zone
+                    </Typography>
+                    <Typography variant="body1">
+                      {Math.round(analysis.stats.left_side.time)} seconds
+                    </Typography>
+                    <Typography variant="body2">
+                      {analysis.stats.left_side.percentage}%
+                    </Typography>
                   </Box>
-                  
+
                   {hasMiddleZone && (
                     <Box sx={{ minWidth: 150, mb: 2 }}>
-                      <Typography variant="subtitle2" color="#43A047">Middle Zone</Typography>
-                      <Typography variant="body1">{Math.round(analysis.stats.middle_zone.time)} seconds</Typography>
-                      <Typography variant="body2">{analysis.stats.middle_zone.percentage}%</Typography>
+                      <Typography variant="subtitle2" color="#43A047">
+                        Neutral Zone
+                      </Typography>
+                      <Typography variant="body1">
+                        {Math.round(analysis.stats.middle_zone.time)} seconds
+                      </Typography>
+                      <Typography variant="body2">
+                        {analysis.stats.middle_zone.percentage}%
+                      </Typography>
                     </Box>
                   )}
-                  
+
                   <Box sx={{ minWidth: 150, mb: 2 }}>
-                    <Typography variant="subtitle2" color="#D81B60">Right Side</Typography>
-                    <Typography variant="body1">{Math.round(analysis.stats.right_side.time)} seconds</Typography>
-                    <Typography variant="body2">{analysis.stats.right_side.percentage}%</Typography>
+                    <Typography variant="subtitle2" color="#D81B60">
+                      Right Zone
+                    </Typography>
+                    <Typography variant="body1">
+                      {Math.round(analysis.stats.right_side.time)} seconds
+                    </Typography>
+                    <Typography variant="body2">
+                      {analysis.stats.right_side.percentage}%
+                    </Typography>
                   </Box>
                 </Stack>
               </Card>
             </Box>
-            
+
             {analysis.summary && (
               <Box sx={{ mt: 4 }}>
                 <SummaryCard summary={analysis.summary} />
