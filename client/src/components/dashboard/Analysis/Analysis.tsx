@@ -12,12 +12,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  Button,
   SelectChangeEvent,
-  Icon,
 } from "@mui/material";
 import axios from "axios";
-import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +25,7 @@ import {
 import { LineChart, PieChart } from "@mui/x-charts";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import { grey } from "@mui/material/colors";
+import SummaryCard from "../Cards/SummaryCard";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -53,7 +51,7 @@ function Analysis() {
   }, []);
 
   const handleVideoChange = async (
-    event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
+    event: SelectChangeEvent
   ) => {
     const videoId = event.target.value as string;
     setSelectedVideo(videoId);
@@ -73,6 +71,9 @@ function Analysis() {
       setAnalysis(null);
     }
   };
+
+  // Check if analysis includes middle zone data
+  const hasMiddleZone = analysis?.stats?.middle_zone !== undefined;
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -181,6 +182,17 @@ function Analysis() {
                       } persons per second`}
                     />
                   </ListItem>
+                  {hasMiddleZone && (
+                    <>
+                      <Divider />
+                      <ListItem>
+                        <ListItemText
+                          primary="Zone Distribution"
+                          secondary={`Left: ${analysis.stats.left_side.percentage}% | Middle: ${analysis.stats.middle_zone.percentage}% | Right: ${analysis.stats.right_side.percentage}%`}
+                        />
+                      </ListItem>
+                    </>
+                  )}
                   <Divider />
                 </List>
               </Box>
@@ -248,35 +260,83 @@ function Analysis() {
                         outerRadius: "100%",
                         paddingAngle: 5,
                         cornerRadius: 5,
-                        data: [
-                          {
-                            value: analysis.stats.left_side.percentage,
-                            label: "Left Side",
-                            color: "blue",
-                          },
-                          {
-                            value: analysis.stats.right_side.percentage,
-                            label: "Right Side",
-                            color: "lightblue",
-                          },
-                        ],
+                        data: hasMiddleZone
+                          ? [
+                              {
+                                value: analysis.stats.left_side.percentage,
+                                label: "Left Side",
+                                color: "#1E88E5", // Blue
+                              },
+                              {
+                                value: analysis.stats.middle_zone.percentage,
+                                label: "Middle Zone",
+                                color: "#43A047", // Green
+                              },
+                              {
+                                value: analysis.stats.right_side.percentage,
+                                label: "Right Side",
+                                color: "#D81B60", // Pink/Red
+                              },
+                            ]
+                          : [
+                              {
+                                value: analysis.stats.left_side.percentage,
+                                label: "Left Side",
+                                color: "#1E88E5", // Blue
+                              },
+                              {
+                                value: analysis.stats.right_side.percentage,
+                                label: "Right Side",
+                                color: "#D81B60", // Pink/Red
+                              },
+                            ],
                       },
                     ]}
-                    height={150}
+                    height={200}
                     width={400}
+                    slotProps={{
+                      legend: {
+                        direction: "row",
+                        position: { vertical: "bottom", horizontal: "middle" },
+                        padding: 0,
+                      },
+                    }}
                   />
                 </Box>
               </Card>
+              
+              <Card sx={{ padding: 2, borderRadius: 4, boxShadow: 3, flexGrow: 1 }}>
+                <Typography variant="h6" gutterBottom>
+                  Zone Time Statistics
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Stack direction="row" spacing={2} flexWrap="wrap">
+                  <Box sx={{ minWidth: 150, mb: 2 }}>
+                    <Typography variant="subtitle2" color="#1E88E5">Left Side</Typography>
+                    <Typography variant="body1">{Math.round(analysis.stats.left_side.time)} seconds</Typography>
+                    <Typography variant="body2">{analysis.stats.left_side.percentage}%</Typography>
+                  </Box>
+                  
+                  {hasMiddleZone && (
+                    <Box sx={{ minWidth: 150, mb: 2 }}>
+                      <Typography variant="subtitle2" color="#43A047">Middle Zone</Typography>
+                      <Typography variant="body1">{Math.round(analysis.stats.middle_zone.time)} seconds</Typography>
+                      <Typography variant="body2">{analysis.stats.middle_zone.percentage}%</Typography>
+                    </Box>
+                  )}
+                  
+                  <Box sx={{ minWidth: 150, mb: 2 }}>
+                    <Typography variant="subtitle2" color="#D81B60">Right Side</Typography>
+                    <Typography variant="body1">{Math.round(analysis.stats.right_side.time)} seconds</Typography>
+                    <Typography variant="body2">{analysis.stats.right_side.percentage}%</Typography>
+                  </Box>
+                </Stack>
+              </Card>
             </Box>
+            
             {analysis.summary && (
               <Box sx={{ mt: 4 }}>
-                <Card sx={{ padding: 3, borderRadius: 4, boxShadow: 3 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Analysis Summary
-                  </Typography>
-                  <Divider sx={{ mb: 2 }} />
-                  <Typography variant="body1">{analysis.summary}</Typography>
-                </Card>
+                <SummaryCard summary={analysis.summary} />
               </Box>
             )}
           </Box>

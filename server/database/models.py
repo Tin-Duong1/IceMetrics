@@ -19,8 +19,10 @@ class Video(SQLModel, table=True):
     duration: int = Field()  # Duration in seconds
     left_side_time: Optional[float] = Field(default=0.0)  # Time spent on left side in seconds
     right_side_time: Optional[float] = Field(default=0.0)  # Time spent on right side in seconds
+    middle_zone_time: Optional[float] = Field(default=0.0)  # Time spent in neutral/middle zone in seconds
     left_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on left side
     right_side_percentage: Optional[float] = Field(default=0.0)  # Percentage of time on right side
+    middle_zone_percentage: Optional[float] = Field(default=0.0)  # Percentage of time in neutral/middle zone
     summary: Optional[str] = Field(default=None)  # Summary of the video
     average_players_per_second: Optional[List[float]] = Field(default=None, sa_column=Column(JSON))
     user_id: int = Field(foreign_key="userinfo.user_id")
