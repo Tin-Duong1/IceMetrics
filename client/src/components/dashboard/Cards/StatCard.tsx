@@ -31,7 +31,6 @@ function StatCard({
               <Typography variant="h4" component={"p"}>
                 {data}
               </Typography>
-              <Chip label="Test" />
             </Stack>
             <Typography variant="caption">{caption}</Typography>
           </Stack>

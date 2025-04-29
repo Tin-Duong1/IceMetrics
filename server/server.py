@@ -5,7 +5,8 @@ from contextlib import asynccontextmanager
 
 from utilities.auth import router as auth_router
 from routes.user_routes import router as user_router
-from routes.processing_routes import router as processing_router
+from routes.video_routes import router as video_router
+from routes.vision_routes import router as vision_router
 
 # creates the FastAPI instance
 app = FastAPI()
@@ -24,10 +25,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# connects to the authentication routes
+# connects to the routes
 app.include_router(auth_router)
 app.include_router(user_router)
-app.include_router(processing_router)
+app.include_router(vision_router)
+app.include_router(video_router)
 
 # root route
 @app.get("/")

@@ -44,7 +44,7 @@ function Home() {
         <StatCard
           title="Minutes Uploaded"
           caption="minutes"
-          data={userStats.total_duration}
+          data={(userStats.total_duration / 60).toPrecision(3)}
         />
       </Stack>
     </Stack>

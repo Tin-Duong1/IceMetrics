@@ -3,10 +3,6 @@ from sqlalchemy.orm import Session
 from database.models import UserInfo, Video  # Import the Video model
 from pydantic import BaseModel
 
-class UserStats(BaseModel):
-    number_of_videos: int
-    total_duration: int
-
 def get_user_by_id(db: Session, user_id: int) -> UserInfo:
     return db.exec(select(UserInfo).where(UserInfo.user_id == user_id)).first()
 
@@ -27,7 +23,7 @@ def add_video_to_user(db: Session, email: str, video_data: dict) -> Video:
 def get_videos_by_user(db: Session, user_id: int):
     return db.exec(select(Video).where(Video.user_id == user_id)).all()
 
-def get_user_stats(db: Session, user_id: int):
+def get_user_stats(db: Session, user_id: int) -> dict:
     user = get_user_by_id(db, user_id)
     if not user:
         raise ValueError("User not found")
@@ -36,7 +32,7 @@ def get_user_stats(db: Session, user_id: int):
     num_of_videos = len(videos)
     total_duration = sum(video.duration for video in videos)
 
-    return UserStats(number_of_videos=num_of_videos, total_duration=total_duration)
+    return {"number_of_videos": num_of_videos, "total_duration": total_duration}
 
 def remove_user(db: Session, user_id: int) -> None:
     user = get_user_by_id(db, user_id)
