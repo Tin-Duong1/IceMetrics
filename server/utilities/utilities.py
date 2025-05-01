@@ -1,7 +1,6 @@
 from sqlmodel import select
 from sqlalchemy.orm import Session
-from database.models import UserInfo, Video  # Import the Video model
-from pydantic import BaseModel
+from database.models import UserInfo, Video
 
 def get_user_by_id(db: Session, user_id: int) -> UserInfo:
     return db.exec(select(UserInfo).where(UserInfo.user_id == user_id)).first()

@@ -17,7 +17,7 @@ class HockeyAnalytics:
     def save_uploaded_video(self, video, temp_dir: str) -> str:
         unique_filename = f"{uuid.uuid4()}_{video.filename}"
         temp_path = os.path.join(temp_dir, unique_filename)
-        with open(temp_path, "wb") as temp_file: d
+        with open(temp_path, "wb") as temp_file:
             content = video.file.read()
             temp_file.write(content)
         return temp_path
