@@ -41,19 +41,6 @@ function TopCards() {
           </Stack>
         </Stack>
       </Card>
-      <Card
-        variant="outlined"
-        sx={{
-          display: { xs: "none", lg: "flex" },
-          flexGrow: 2,
-          padding: 2,
-          borderRadius: 4,
-          width: 300,
-          color: "white",
-          boxShadow: 6,
-          background: "radial-gradient(at left top, #010101, #7E7E7E)",
-        }}
-      ></Card>
     </Stack>
   );
 }
