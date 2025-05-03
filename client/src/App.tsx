@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
-import SignIn from "./components/Landing/SignIn";
-import NavLayout from "./components/Navbar/NavLayout";
-import Home from "./Home";
+import SignIn from "./Components/Landing/SignIn";
+import NavLayout from "./Components/Navbar/NavLayout";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
-import SignUp from "./components/Landing/SignUp";
-import About from "./About";
+import SignUp from "./Components/Landing/SignUp";
 import { CssBaseline } from "@mui/material";
-import Dashboard from "./components/dashboard/Dashboard";
-import ProtectedRoutes from "./components/Navbar/ProtectedRoutes";
+import Dashboard from "./Pages/Dashboard";
+import ProtectedRoutes from "./Components/Navbar/ProtectedRoutes";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
 
 export default function App() {
   const jwtToken = localStorage.getItem("jwt_token");

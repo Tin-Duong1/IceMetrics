@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import MenuContent from "./MenuContent";
+import MenuContent from "../MenuContent";
 import SideBarLogo from "./SideBarLogo";
 import { grey } from "@mui/material/colors";
 import SideBarAccount from "./SideBarAccount";

@@ -1,12 +1,11 @@
-import { Box, Button, Divider, Drawer, IconButton } from "@mui/material";
-import React, { useState } from "react";
-import SideBarLogo from "./SideBarLogo";
-import MenuContent from "./MenuContent";
-import SideBarAccount from "./SideBarAccount";
+import { Box, Drawer, IconButton } from "@mui/material";
+import { useState } from "react";
+import SideBarLogo from "../SideBar/SideBarLogo";
+import MenuContent from "../MenuContent";
+import SideBarAccount from "../SideBar/SideBarAccount";
 import { grey } from "@mui/material/colors";
 import MenuIcon from "@mui/icons-material/Menu";
 import Logo from "/LogoBlack.svg";
-import Title from "/title.png";
 
 function TopBar({
   setActivePage,

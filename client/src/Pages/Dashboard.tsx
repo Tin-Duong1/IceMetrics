@@ -1,27 +1,12 @@
-import {
-  Badge,
-  Box,
-  Breadcrumbs,
-  Button,
-  Drawer,
-  IconButton,
-  Stack,
-  Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { Box, Breadcrumbs, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import SideBar from "./Sidebar/SideBar";
-import Settings from "./Settings/Settings";
-import Home from "./Home/Home";
-import Search from "./Search";
-import { Notifications } from "@mui/icons-material";
-import Uploads from "./Uploads";
-import Feedback from "./Feedback/Feedback";
-import Analysis from "./Analysis/Analysis";
-import TopBar from "./Sidebar/TopBar";
+import SideBar from "../Components/Dashboard/Navigation/SideBar/SideBar";
+import Settings from "../Components/Dashboard/Settings/Settings";
+import Home from "../Components/Dashboard/Home/Home";
+import Uploads from "../Components/Dashboard/Uploads";
+import Feedback from "../Components/Dashboard/Feedback/Feedback";
+import Analysis from "../Components/Dashboard/Analysis/Analysis";
+import TopBar from "../Components/Dashboard/Navigation/TopBar/TopBar";
 import axios from "axios";
 
 function Dashboard() {
@@ -65,7 +50,7 @@ function Dashboard() {
         return <Feedback />;
 
       default:
-        return <div>{activePage}</div>; // Placeholder for other pages
+        return <div>{activePage}</div>;
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -25,7 +25,6 @@ import {
 import { LineChart } from "@mui/x-charts";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import { grey } from "@mui/material/colors";
-import SummaryCard from "../Cards/SummaryCard";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -376,9 +375,23 @@ function Analysis() {
             </Box>
 
             {analysis.summary && (
-              <Box sx={{ mt: 4 }}>
-                <SummaryCard summary={analysis.summary} />
-              </Box>
+              <Card
+                sx={{
+                  padding: 3,
+                  marginTop: 2,
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  width: "100%",
+                }}
+              >
+                <Box>
+                  <Typography variant="h6">AI Analysis Summary</Typography>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant="body1" sx={{ lineHeight: 1.7 }}>
+                    {analysis.summary}
+                  </Typography>
+                </Box>
+              </Card>
             )}
           </Box>
         ) : (

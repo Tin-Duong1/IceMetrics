@@ -146,9 +146,6 @@ function SignIn() {
           >
             Sign In
           </Button>
-          <Link component="button" type="button" variant="body2" sx={{ my: 2 }}>
-            Forgot your password?
-          </Link>
         </Box>
         <Divider>or</Divider>
         <Typography sx={{ textAlign: "center", my: 2 }}>
