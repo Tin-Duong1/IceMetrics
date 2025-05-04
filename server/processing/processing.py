@@ -22,6 +22,7 @@ def process_and_summarize_video(video: UploadFile, name: str, temp_dir: str):
             "duration": int(sum(zone_time.values()))
         }, temp_path
     except Exception as e:
+        raise RuntimeError(f"Error processing video: {str(e)}")
+    finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-        raise RuntimeError(f"Error processing video: {str(e)}")
