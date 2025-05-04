@@ -4,6 +4,8 @@ import {
   Button,
   Stack,
   Typography,
+  Modal,
+  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -24,10 +26,12 @@ function Uploads() {
       video_id: number;
       name: string;
       datetime_uploaded: string;
-      duration: number;
+      duration: number | null;
     }[]
   >([]);
   const [videoName, setVideoName] = useState<string>("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onDrop = (acceptedFiles: File[]) => {
     setVideo(acceptedFiles[0] || null);
@@ -55,19 +59,25 @@ function Uploads() {
     formData.append("name", videoName);
 
     try {
-      const token = localStorage.getItem("jwt_token"); // Retrieve token from localStorage
+      const token = localStorage.getItem("jwt_token");
+      setIsAnalyzing(true);
+
       await axios.post("/api/analyze_video", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
+
       alert(`Video "${videoName}" uploaded successfully!`);
-      setVideoName(""); // Reset video name input
+      setVideoName("");
+      setVideo(null);
       fetchVideos();
     } catch (error) {
       console.error("Error uploading video:", error);
-      alert("Failed to upload video. Please try again.");
+      setErrorMessage("Failed to analyze the video. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -112,10 +122,13 @@ function Uploads() {
   return (
     <Stack
       spacing={4}
-      direction={"row"}
       sx={{
         padding: 2,
+        display: "flex",
         flexWrap: "wrap",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
       }}
       gap={4}
     >
@@ -182,29 +195,32 @@ function Uploads() {
           Upload Video
         </Button>
       </Stack>
-      {/* Videos Table */}
-      <Box>
-        <Typography variant="h6" gutterBottom>
-          Your Videos
-        </Typography>
-        <TableContainer component={Paper}>
+      <Box sx={{ padding: 2, borderRadius: 2 }}>
+        <Typography variant="h6">Your Videos</Typography>
+        <TableContainer component={Paper} sx={{ display: "flex" }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Video Name</TableCell>
-                <TableCell>Uploaded At</TableCell>
-                <TableCell>Duration (seconds)</TableCell>
-                <TableCell>Actions</TableCell> {/* New column for actions */}
+                <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                  Uploaded At
+                </TableCell>
+                <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                  Duration (seconds)
+                </TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {videos.map((video) => (
                 <TableRow key={video.video_id}>
                   <TableCell>{video.name}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                     {new Date(video.datetime_uploaded).toLocaleString()}
                   </TableCell>
-                  <TableCell>{video.duration}</TableCell>
+                  <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                    {video.duration}
+                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
@@ -220,6 +236,33 @@ function Uploads() {
           </Table>
         </TableContainer>
       </Box>
+
+      <Modal open={isAnalyzing} onClose={() => {}}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 300,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            textAlign: "center",
+            borderRadius: 2,
+          }}
+        >
+          <CircularProgress />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Analyzing Video...
+          </Typography>
+          {errorMessage && (
+            <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+              {errorMessage}
+            </Typography>
+          )}
+        </Box>
+      </Modal>
     </Stack>
   );
 }

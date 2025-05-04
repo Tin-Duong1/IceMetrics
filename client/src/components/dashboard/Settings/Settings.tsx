@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
-import General from "./General";
-import Security from "./Security";
-import Data from "./Data";
+import { useEffect, useState } from "react";
+import { Box, Divider, TextField, Typography } from "@mui/material";
+import DeleteAccount from "./DeleteAccount";
 import axios from "axios";
+import PasswordChange from "./PasswordChange";
 
 function Settings() {
   const [userData, setUserData] = useState({
     username: "",
+    name: "",
     email: "",
     phoneNumber: "",
   });
@@ -38,9 +33,46 @@ function Settings() {
       <Typography variant="h4" gutterBottom>
         Settings
       </Typography>
-      <General userData={userData} />
-      <Security />
-      <Data />
+      <Box sx={{ maxWidth: 800 }}>
+        <Divider />
+        <div>
+          <Box
+            sx={{
+              my: 3,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography width={150}>Full Name</Typography>
+            <TextField
+              disabled
+              sx={{ flexGrow: 1, maxWidth: 500 }}
+              value={userData.name}
+            />
+          </Box>
+          <Box
+            sx={{
+              my: 3,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography width={150}>Email</Typography>
+            <TextField
+              disabled
+              sx={{ flexGrow: 1, maxWidth: 500 }}
+              value={userData.email}
+            />
+          </Box>
+        </div>
+        <Divider />
+      </Box>
+      <PasswordChange />
+      <DeleteAccount />
     </Box>
   );
 }

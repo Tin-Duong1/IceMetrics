@@ -71,9 +71,6 @@ function Home() {
                 videos.
               </Typography>
             </Box>
-            <Button variant="contained" sx={{ width: 120, mt: 2 }}>
-              Learn More
-            </Button>
           </Stack>
         </Stack>
       </Card>

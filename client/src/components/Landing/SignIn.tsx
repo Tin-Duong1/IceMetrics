@@ -139,7 +139,7 @@ function SignIn() {
             />
           </FormControl>
           <Button
-            sx={{ mt: 2 }}
+            sx={{ my: 2 }}
             type="submit"
             variant="contained"
             color="primary"

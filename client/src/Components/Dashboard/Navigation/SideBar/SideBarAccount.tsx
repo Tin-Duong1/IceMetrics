@@ -28,11 +28,6 @@ function SideBarAccount({
         borderColor: grey[300],
       }}
     >
-      <Avatar
-        sizes="small"
-        alt={userData.name}
-        sx={{ width: 36, height: 36 }}
-      />
       <Stack>
         <Typography>{userData.name}</Typography>
         <Typography variant="caption" fontSize={10}>

@@ -40,8 +40,9 @@ function OptionsMenu({
         open={open}
         onClose={handleClose}
         onClick={handleClose}
-        transformOrigin={{ horizontal: 40, vertical: 130 }}
+        transformOrigin={{ horizontal: 40, vertical: 100 }}
         anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        sx={{ zIndex: 10000 }}
       >
         <MenuItem
           onClick={() => {
