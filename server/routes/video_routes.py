@@ -8,7 +8,7 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from database.models import Video
 from database.database_setup import *
 from utilities.security import get_current_user
-from utilities.utilities import add_video_to_user, get_user_by_email, get_videos_by_user
+from utilities.utilities import add_video_to_user, get_user_by_email, get_videos_by_user, remove_video_from_user 
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

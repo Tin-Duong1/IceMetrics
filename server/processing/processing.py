@@ -10,7 +10,8 @@ def process_and_summarize_video(video: UploadFile, name: str, temp_dir: str):
     temp_path = hockey_analytics.save_uploaded_video(video, temp_dir)
 
     try:
-        stats = hockey_analytics.process_video(temp_path)
+        zone_time, average_players_per_interval = hockey_analytics.process_video(temp_path)
+        stats = hockey_analytics.prepare_video_stats(zone_time, average_players_per_interval)
         summary = summarize_stats(stats)
 
         return {
