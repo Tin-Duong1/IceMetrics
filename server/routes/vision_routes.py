@@ -25,10 +25,8 @@ async def analyze_video(
     temp_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tmp_videos")
     
     try:
-        # Process and summarize the video
         result, temp_path = process_and_summarize_video(video, name, temp_dir)
 
-        # Save video info to the database
         with Session(engine) as session:
             user = get_user_by_email(session, current_user)
             if not user:

@@ -42,7 +42,6 @@ def remove_user(db: Session, user_id: int) -> None:
     for video in videos:
         db.delete(video)
     
-    # Remove the user
     db.delete(user)
     db.commit()
 

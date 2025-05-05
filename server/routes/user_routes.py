@@ -31,7 +31,7 @@ async def read_user_stats(
 
 @router.post("/me/change_password")
 async def change_password(
-    password_data: dict,  # Changed to plain dictionary
+    password_data: dict,
     session: SessionDep,
     current_user: UserInfo = Depends(get_current_user)
 ):

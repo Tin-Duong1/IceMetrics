@@ -8,12 +8,10 @@ from .models.models import load_rink_model, load_player_model  # Corrected impor
 
 class HockeyAnalytics:
 
-    # Load the rink and player detection models
     def __init__(self):
         self.rink_model = load_rink_model()
         self.player_model = load_player_model()
 
-    # Save the uploaded video to a temporary directory
     def save_uploaded_video(self, video, temp_dir: str) -> str:
         unique_filename = f"{uuid.uuid4()}_{video.filename}"
         temp_path = os.path.join(temp_dir, unique_filename)
@@ -22,7 +20,6 @@ class HockeyAnalytics:
             temp_file.write(content)
         return temp_path
 
-    # Calculate the percentage of time spent in each zone
     def calculate_zone_percentages(self, zone_time: dict) -> dict:
         total_time = sum(zone_time.values())
         return {
@@ -31,7 +28,6 @@ class HockeyAnalytics:
             "right_side_percentage": round((zone_time["right"] / total_time) * 100, 1) if total_time > 0 else 0,
         }
 
-    # Prepare the video statistics for output
     def prepare_video_stats(self, zone_time: dict, average_players: float) -> dict:
         percentages = self.calculate_zone_percentages(zone_time)
         return {
@@ -42,7 +38,6 @@ class HockeyAnalytics:
             "average_players_per_second": average_players,
         }
 
-    # Process the rink and player detection results
     def _process_rink(self, frame, rink_results):
         if rink_results[0].masks is None:
             return frame
@@ -61,7 +56,6 @@ class HockeyAnalytics:
             frame = cv2.addWeighted(frame, 1.0, colored_mask, 0.5, 0)
         return frame
 
-    # Process player detection results and count players in each zone
     def _process_players(self, frame, player_results, zone_width):
         if player_results[0].boxes is None:
             return 0, {"left": 0, "middle": 0, "right": 0}
@@ -89,7 +83,6 @@ class HockeyAnalytics:
 
         return player_count, zone_counts
 
-    # Update the zone time based on the elapsed time and player counts
     def _update_zone_time(self, zone_time, zone_counts, last_update_time):
         current_time = time.time()
         elapsed_time = current_time - last_update_time
@@ -97,10 +90,9 @@ class HockeyAnalytics:
         zone_time[max_zone] += elapsed_time
         return current_time
 
-    # Main function to process the video and analyze player zones
-    def process_video(self, video_path, show_frames: bool = False):  # Default is False
+    def process_video(self, video_path, show_frames: bool = False):
         cap = cv2.VideoCapture(video_path)
-        if not cap.isOpened():  # Check if the video file was successfully opened
+        if not cap.isOpened():
             raise FileNotFoundError(f"Unable to open video file: {video_path}")
 
         fps = cap.get(cv2.CAP_PROP_FPS)
@@ -149,4 +141,5 @@ class HockeyAnalytics:
         if show_frames:
             cv2.destroyAllWindows()
 
-        return zone_time, average_players_per_interval
+        return self.prepare_video_stats(zone_time, average_players_per_interval)
+

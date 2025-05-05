@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def summarize_stats(stats):
-    openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     
-    # Generate the prompt using the helper function
+    openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     prompt = get_summary_prompt(stats)
     
     try:

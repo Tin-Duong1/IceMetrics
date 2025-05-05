@@ -18,7 +18,6 @@ async def get_user_videos(
     session: SessionDep, 
     current_user: str = Depends(get_current_user)
 ):
-    """Get all videos for the current user"""
     user = get_user_by_email(session, current_user)
     
     if not user:
@@ -34,7 +33,6 @@ async def get_video_analysis(
     session: SessionDep,
     current_user: str = Depends(get_current_user)
 ):
-    """Get analysis details for a specific video by ID"""
     user = get_user_by_email(session, current_user)
     
     if not user:
@@ -45,7 +43,6 @@ async def get_video_analysis(
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
-    # Create the response with all possible fields
     response = {
         "video_id": video.video_id,
         "name": video.name,
@@ -60,16 +57,14 @@ async def get_video_analysis(
                 "time": video.right_side_time,
                 "percentage": video.right_side_percentage
             },
-            "average_players_per_second": video.average_players_per_second
+            "middle_zone": {
+                "time": video.middle_zone_time,
+                "percentage": video.middle_zone_percentage
+            },
+            "average_players_per_second": video.average_players_per_second,
+
         }
     }
-    
-    # Add middle zone data if it exists
-    if hasattr(video, 'middle_zone_time') and video.middle_zone_time is not None:
-        response["stats"]["middle_zone"] = {
-            "time": video.middle_zone_time,
-            "percentage": video.middle_zone_percentage
-        }
     
     return response
 
