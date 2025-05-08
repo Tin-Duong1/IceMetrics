@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 import jwt
+import os  # Add this import
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
@@ -11,14 +12,16 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from utilities.utilities import get_user_by_email
 from sqlmodel import Session
-
 from database.models import UserInfo
-
-SECRET_KEY = "dbe62f000e612a462638711ae33a61427d234de75e9f5c5f44a668e6ee47b922"
-ALGORITHM = "HS256"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Verify password
 def verify_password(plain_password, hashed_password):
