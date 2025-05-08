@@ -1,5 +1,7 @@
 import cv2
 from typing import Optional
+from sqlmodel import select
+
 
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
@@ -13,6 +15,7 @@ from utilities.utilities import add_video_to_user, get_user_by_email, get_videos
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# Gets user videos
 @router.get('/videos')
 async def get_user_videos(
     session: SessionDep, 
@@ -27,6 +30,7 @@ async def get_user_videos(
     
     return videos
 
+# Gets the analysis of a specific video
 @router.get('/video/{video_id}/analysis')
 async def get_video_analysis(
     video_id: int,
@@ -38,8 +42,9 @@ async def get_video_analysis(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    video = session.query(Video).filter(Video.video_id == video_id, Video.user_id == user.user_id).first()
-    
+    stmt = select(Video).where(Video.video_id == video_id, Video.user_id == user.user_id)
+    video = session.exec(stmt).first()    
+
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
@@ -68,6 +73,7 @@ async def get_video_analysis(
     
     return response
 
+# Deletes a video
 @router.delete("/me/delete_video/{video_id}")
 async def delete_video(
     video_id: int,

@@ -53,4 +53,4 @@ async def signup(user: dict, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(new_user)
 
-    return {"id": new_user.id, "name": new_user.name, "email": new_user.email}
+    return {"user_id": new_user.user_id, "name": new_user.name, "email": new_user.email}

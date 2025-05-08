@@ -14,13 +14,13 @@ from processing.processing import process_and_summarize_video
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# Analyzes a video and stores the results in the database
 @router.post("/analyze_video")
 async def analyze_video(
     name: str = Form(...),
     video: UploadFile = File(...),
     current_user: str = Depends(get_current_user),
     custom_prompt: Optional[str] = Form(None),
-    use_v2: bool = Form(True)
 ):
     temp_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tmp_videos")
     
