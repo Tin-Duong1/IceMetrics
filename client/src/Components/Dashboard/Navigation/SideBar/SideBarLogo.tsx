@@ -1,4 +1,4 @@
-import { Box, Card } from "@mui/material";
+import { Box } from "@mui/material";
 import Logo from "/LogoBlack.svg";
 import { grey } from "@mui/material/colors";
 

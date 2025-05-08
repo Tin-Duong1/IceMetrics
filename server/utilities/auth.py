@@ -10,6 +10,7 @@ router = APIRouter()
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 3000
 
+# Sign in route
 @router.post("/signin")
 async def signin(user: dict, session: Session = Depends(get_session)):
     email = user.get("email")
@@ -29,6 +30,7 @@ async def signin(user: dict, session: Session = Depends(get_session)):
 
     return {"access_token": access_token, "xtoken_type": "bearer"}
 
+# Sign up route
 @router.post("/signup")
 async def signup(user: dict, session: Session = Depends(get_session)):
     email = user.get("email")

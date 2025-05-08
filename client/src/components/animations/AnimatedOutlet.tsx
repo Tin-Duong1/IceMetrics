@@ -1,5 +1,3 @@
-// AnimatedOutlet.tsx
-
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 import { useLocation, useOutlet } from "react-router";

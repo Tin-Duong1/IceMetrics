@@ -2,7 +2,6 @@ import { createTheme } from "@mui/material/styles";
 import { grey, red } from "@mui/material/colors";
 import type {} from "@mui/x-charts/themeAugmentation";
 
-// A custom theme for this app
 const theme = createTheme({
   cssVariables: true,
   palette: {
@@ -62,7 +61,7 @@ const theme = createTheme({
           "&.Mui-selected": {
             backgroundColor: grey[200],
             "& .MuiListItemIcon-root": {
-              color: "black", // Change to primary.main color
+              color: "black",
             },
           },
           "&.Mui-selected:hover": {

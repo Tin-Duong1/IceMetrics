@@ -3,8 +3,10 @@ from processing.vision import HockeyAnalytics
 from processing.summary import summarize_stats
 from fastapi import UploadFile
 
+# Initialize the HockeyAnalytics class
 hockey_analytics = HockeyAnalytics()
 
+# Function to process and summarize the video
 def process_and_summarize_video(video: UploadFile, name: str, temp_dir: str):
     os.makedirs(temp_dir, exist_ok=True)
     temp_path = hockey_analytics.save_uploaded_video(video, temp_dir)

@@ -1,10 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import SignIn from "./Components/Landing/SignIn";
 import NavLayout from "./Components/Navbar/NavLayout";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./theme";
 import SignUp from "./Components/Landing/SignUp";
-import { CssBaseline } from "@mui/material";
 import Dashboard from "./Pages/Dashboard";
 import ProtectedRoutes from "./Components/Navbar/ProtectedRoutes";
 import Home from "./Pages/Home";

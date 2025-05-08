@@ -1,10 +1,4 @@
-import {
-  AccountCircleOutlined,
-  AccountCircleRounded,
-  Circle,
-  MoreVertRounded,
-} from "@mui/icons-material";
-import { Avatar, Box, IconButton, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import OptionsMenu from "./OptionsMenu";
 

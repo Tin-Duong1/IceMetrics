@@ -7,7 +7,6 @@ const Feedback: React.FC = () => {
 
   const handleSubmit = () => {
     if (feedback.trim()) {
-      // Simulate sending feedback to developers
       console.log("Feedback submitted:", feedback);
       setSubmitted(true);
       setFeedback("");

@@ -6,7 +6,7 @@ from database.database_setup import SessionDep
 
 router = APIRouter()
 
-
+# Reads the current user's information
 @router.get("/me/settings")
 async def read_user_data(
     session: SessionDep, 
@@ -17,6 +17,7 @@ async def read_user_data(
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+# Reads the current users stats
 @router.get("/me/stats")
 async def read_user_stats(
     session: SessionDep, 
@@ -29,6 +30,7 @@ async def read_user_stats(
     user_stats = get_user_stats(session, user.user_id)
     return user_stats
 
+# Update users password
 @router.post("/me/change_password")
 async def change_password(
     password_data: dict,
@@ -47,6 +49,7 @@ async def change_password(
     session.refresh(user)
     return {"detail": "Password updated successfully"}
 
+# Delete a user's account
 @router.delete("/me/delete_account")
 async def delete_user(
     session: SessionDep,

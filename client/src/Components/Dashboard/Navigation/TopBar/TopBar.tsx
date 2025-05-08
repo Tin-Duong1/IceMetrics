@@ -36,7 +36,7 @@ function TopBar({
           borderBottom: "1px solid",
           borderColor: grey[300],
           padding: 2,
-          zIndex: 1300, // Ensure it is above other elements
+          zIndex: 1300,
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -61,10 +61,7 @@ function TopBar({
           activePage={activePage}
         />
         {userData && (
-          <SideBarAccount
-            userData={userData} // Pass userData to SideBarAccount
-            setActivePage={setActivePage}
-          />
+          <SideBarAccount userData={userData} setActivePage={setActivePage} />
         )}
       </Drawer>
     </Box>

@@ -20,12 +20,15 @@ ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# Verify password
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
+# Hash password
 def get_password_hash(password):
     return pwd_context.hash(password)
 
+# Authenticate user
 def authenticate_user(session: Session, email: str, password: str):
     user = get_user_by_email(session, email)
     if not user:
@@ -34,6 +37,7 @@ def authenticate_user(session: Session, email: str, password: str):
         return None
     return user
 
+# Get current user
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     print(token)
     credentials_exception = HTTPException(
@@ -50,6 +54,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
     return email
 
+# Create JWT access token
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:

@@ -8,9 +8,9 @@ from ultralytics import YOLO
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Load the rink and player detection models
 def load_rink_model():
     return YOLO(os.path.join(BASE_DIR, "models/rink_model.pt"))
-
 def load_player_model():
     return YOLO(os.path.join(BASE_DIR, "models/player_model.pt"))
 
@@ -97,7 +97,7 @@ class HockeyAnalytics:
 
         return player_count, zone_counts
 
-    # Update the zone time based on the elapsed time and player counts
+    # Update the zone time based on the current time and last update time
     def _update_zone_time(self, zone_time, zone_counts, last_update_time):
         current_time = time.time()
         elapsed_time = current_time - last_update_time
@@ -105,10 +105,10 @@ class HockeyAnalytics:
         zone_time[max_zone] += elapsed_time
         return current_time
 
-    # Main function to process the video and analyze player zones
-    def process_video(self, video_path, show_frames: bool = False):  # Default is False
+    # Process the video and calculate zone time and average players
+    def process_video(self, video_path, show_frames: bool = False):
         cap = cv2.VideoCapture(video_path)
-        if not cap.isOpened():  # Check if the video file was successfully opened
+        if not cap.isOpened():
             raise FileNotFoundError(f"Unable to open video file: {video_path}")
 
         fps = cap.get(cv2.CAP_PROP_FPS)
@@ -159,16 +159,14 @@ class HockeyAnalytics:
 
         return zone_time, average_players_per_interval
 
+# Main function to test the video processing
 def main():
-    video_path = "../videos/half_clip.mp4"  # <-- Replace with your actual video file path
+    video_path = "../videos/half_clip.mp4"
 
     analytics = HockeyAnalytics()
 
     try:
         stats = analytics.process_video(video_path, show_frames=True)
-        print("\n--- Video Stats ---")
-        for key, value in stats.items():
-            print(f"{key}: {value}")
     except FileNotFoundError as e:
         print(f"Error: {e}")
     except Exception as e:

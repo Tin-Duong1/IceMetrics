@@ -27,10 +27,7 @@ function SideBar({
       <SideBarLogo />
       <MenuContent setActivePage={setActivePage} activePage={activePage} />
       {userData && (
-        <SideBarAccount
-          userData={userData} // Pass userData to SideBarAccount
-          setActivePage={setActivePage}
-        />
+        <SideBarAccount userData={userData} setActivePage={setActivePage} />
       )}
     </Box>
   );

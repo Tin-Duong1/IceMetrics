@@ -47,7 +47,7 @@ function OptionsMenu({
         <MenuItem
           onClick={() => {
             handleClose();
-            setActivePage("Settings"); // Change the active page to "settings"
+            setActivePage("Settings");
           }}
         >
           Settings
@@ -55,8 +55,8 @@ function OptionsMenu({
         <MenuItem
           onClick={() => {
             handleClose();
-            localStorage.clear(); // Clear local storage on logout
-            window.location.href = "/"; // Redirect to sign-in page
+            localStorage.clear();
+            window.location.href = "/";
           }}
         >
           Log out

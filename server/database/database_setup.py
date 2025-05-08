@@ -12,20 +12,16 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 connect_args = {}
 engine = create_engine(DATABASE_URL, echo=True, connect_args=connect_args)
 
-# Import your models here
-from .models import UserInfo
+from .models import UserInfo, Video
 
+# Create the database and tables
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-    
 
+# Get a session for database operations
 def get_session():
     with Session(engine) as session:
         yield session
-        
-def get_user_by_email(email: str):
-    with Session(engine) as session:
-        return UserInfo.get_user_by_email(session, email)
 
 SessionDep = Annotated[Session, Depends(get_session)]
 

@@ -15,7 +15,7 @@ import {
 import { CloseRounded, Menu } from "@mui/icons-material";
 import LargeLogo from "/LogoBlack.svg";
 import Title from "/title.png";
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 
 const pages = [
   { name: "Home", route: "/" },

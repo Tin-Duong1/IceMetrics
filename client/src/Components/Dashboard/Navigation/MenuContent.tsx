@@ -53,7 +53,7 @@ function MenuContent({
             <ListItemButton
               onClick={() => {
                 setActivePage(item.name);
-                closeDrawer?.(); // Close the drawer if the function is provided
+                closeDrawer?.();
               }}
               sx={{
                 color: activePage === item.name ? "black" : "grey",
@@ -84,7 +84,7 @@ function MenuContent({
             <ListItemButton
               onClick={() => {
                 setActivePage(item.name);
-                closeDrawer?.(); // Close the drawer if the function is provided
+                closeDrawer?.();
               }}
               sx={{
                 color: activePage === item.name ? "black" : "grey",

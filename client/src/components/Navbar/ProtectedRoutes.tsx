@@ -1,6 +1,4 @@
-import React from "react";
-import { Route, Navigate, Outlet } from "react-router-dom";
-import jwtDecode from "jwt-decode"; // Add this import
+import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoutes = () => {
   const token = localStorage.getItem("jwt_token");
@@ -9,10 +7,10 @@ const ProtectedRoutes = () => {
     if (!token) return true;
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      const currentTime = Date.now() / 1000; // Current time in seconds
+      const currentTime = Date.now() / 1000;
       if (decodedToken.exp < currentTime) {
-        localStorage.removeItem("jwt_token"); // Remove the token if expired
-        localStorage.removeItem("activePage"); // Remove activePage if token is expired
+        localStorage.removeItem("jwt_token");
+        localStorage.removeItem("activePage");
         return true;
       }
       return false;

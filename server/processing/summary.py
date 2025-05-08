@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Summarize the statistics of a hockey game using OpenAI's GPT-4 model
 def summarize_stats(stats):
     
     openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -24,6 +25,7 @@ def summarize_stats(stats):
     except Exception as e:
         return f"Error generating summary: {str(e)}"
 
+# Get the prompt for summarizing hockey game statistics
 def get_summary_prompt(stats):
     return f"""
     Generate a brief but insightful summary of the following hockey game statistics with three zones:
