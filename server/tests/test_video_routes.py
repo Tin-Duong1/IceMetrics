@@ -30,7 +30,7 @@ def test_get_user_videos(auth_headers, test_video):
     assert isinstance(response.json(), list)
 
 def test_get_video_analysis(auth_headers, test_video):
-    video_id = 1  # Replace with a valid video ID for testing
+    video_id = test_video
     response = client.get(f"/video/{video_id}/analysis", headers=auth_headers)
     if response.status_code == 404:
         assert response.json()["detail"] in ["User not found", "Video not found"]
@@ -40,7 +40,7 @@ def test_get_video_analysis(auth_headers, test_video):
         assert "stats" in response.json()
 
 def test_delete_video(auth_headers, test_video):
-    video_id = 1  # Replace with a valid video ID for testing
+    video_id = test_video
     response = client.delete(f"/me/delete_video/{video_id}", headers=auth_headers)
     if response.status_code == 404:
         assert response.json()["detail"] in ["User not found", "Video not found"]
