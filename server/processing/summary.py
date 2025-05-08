@@ -17,7 +17,7 @@ def summarize_stats(stats):
                 {"role": "system", "content": "You are an expert hockey analyst providing insights on game data. Please summarize the statistics and provide insights."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=200,
+            max_tokens=500,
             temperature=0.7
         )
         
