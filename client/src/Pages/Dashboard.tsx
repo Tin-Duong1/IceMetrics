@@ -4,7 +4,6 @@ import SideBar from "../Components/Dashboard/Navigation/SideBar/SideBar";
 import Settings from "../Components/Dashboard/Settings/Settings";
 import Home from "../Components/Dashboard/Home/Home";
 import Uploads from "../Components/Dashboard/Uploads";
-import Feedback from "../Components/Dashboard/Feedback/Feedback";
 import Analysis from "../Components/Dashboard/Analysis/Analysis";
 import TopBar from "../Components/Dashboard/Navigation/TopBar/TopBar";
 import axios from "axios";
@@ -46,8 +45,6 @@ function Dashboard() {
         return <Home />;
       case "Uploads":
         return <Uploads />;
-      case "Feedback":
-        return <Feedback />;
 
       default:
         return <div>{activePage}</div>;

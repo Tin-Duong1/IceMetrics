@@ -17,7 +17,6 @@ user_info = {
 
 @pytest.fixture(scope="session")
 def test_user():
-    # Ensure the user is created and signed in before tests
     signup()
     access_token = signin()
 
@@ -27,7 +26,6 @@ def test_user():
         "password": user_info["password"]
     }
 
-    # Clean up by deleting the user
     delete_user(access_token)
 
 # Sign up function to create a test user

@@ -28,7 +28,6 @@ import { grey } from "@mui/material/colors";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
-// Types
 interface Video {
   video_id: number;
   name: string;
