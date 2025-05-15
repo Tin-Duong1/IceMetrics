@@ -6,7 +6,6 @@ function Home() {
   return (
     <AnimatedLayout>
       <Hero />
-      <Box sx={{ height: 130, backgroundColor: "black", color: "white" }}></Box>
     </AnimatedLayout>
   );
 }
